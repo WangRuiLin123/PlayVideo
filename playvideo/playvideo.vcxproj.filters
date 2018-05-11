@@ -36,7 +36,7 @@
     <ClInclude Include="CvvImage.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="yolo_v2_class.h">
+    <ClInclude Include="yolo_v2_class.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
