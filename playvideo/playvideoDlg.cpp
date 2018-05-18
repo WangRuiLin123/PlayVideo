@@ -10,7 +10,6 @@
 #include"resource.h"
 #include "yolo_v2_class.hpp"
 #include <vector>
-#include "MyButton.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -21,24 +20,9 @@ HDC hDC;//视频显示控件设备句柄
 CWnd *pwnd;
 CString FileName;
 CStatic *pStc;//标识图像显示的picture 控件
-<<<<<<< HEAD
-std::string cfg_file = "myyolov2-tiny.cfg";
-=======
-CMyButton m_Btn1;
-CMyButton m_Btn2;
-CMyButton m_Btn3;
-CMyButton m_Btn4;
-CMyButton m_Btn5;
-CMyButton m_Btn6;
-CMyButton m_Btn7;
-
-
-
-
 std::string cfg_file = "yolov2-tiny.cfg";
->>>>>>> 7024b7c5db4c6c132e58b20661ce6b749a3e528a
 //cv::VideoCapture capture(0);
-std::string weights_file = "myyolov2-tiny_31300.weights";
+std::string weights_file = "yolov2-tiny.weights";
 //Detector detector(cfg_file, weights_file); //生成detector
 Detector *detector;
 int m;
@@ -85,7 +69,7 @@ END_MESSAGE_MAP()
 CplayvideoDlg::CplayvideoDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PLAYVIDEO_DIALOG, pParent)
 {
-	m_hIcon = AfxGetApp()->LoadIcon(IDI_ICON1);
+	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
 void CplayvideoDlg::DoDataExchange(CDataExchange* pDX)
@@ -94,8 +78,6 @@ void CplayvideoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO1, m_comboWeb);
 
 	DDX_Control(pDX, IDC_COMBO1, m_comboWeb);
-	DDX_Control(pDX, IDC_DATETIMEPICKER1, m_dtCtrl);
-	DDX_Control(pDX, IDC_DATETIMEPICKER2, m_cdCtrl);
 }
 
 BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
@@ -114,12 +96,7 @@ BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON6, &CplayvideoDlg::OnBnClickedButton6)
 	ON_EN_CHANGE(IDC_EDIT3, &CplayvideoDlg::OnEnChangeEdit3)
 	ON_EN_CHANGE(IDC_EDIT1, &CplayvideoDlg::OnEnChangeEdit1)
-	
-	ON_NOTIFY(DTN_DATETIMECHANGE, IDC_DATETIMEPICKER2, &CplayvideoDlg::OnDtnDatetimechangeDatetimepicker2)
-	
-	//ON_EN_CHANGE(IDC_EDIT2, &CplayvideoDlg::OnEnChangeEdit2)
-	ON_WM_CTLCOLOR()
-	
+	ON_BN_CLICKED(IDC_BUTTON4, &CplayvideoDlg::OnBnClickedButton4)
 END_MESSAGE_MAP()
 
 
@@ -134,7 +111,7 @@ BOOL CplayvideoDlg::OnInitDialog()
 	// IDM_ABOUTBOX 必须在系统命令范围内。
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
-	
+	detector = new Detector(cfg_file, weights_file, 0);
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu != NULL)
 	{
@@ -168,39 +145,6 @@ BOOL CplayvideoDlg::OnInitDialog()
 	m_comboWeb.AddString(_T("测试视频4"));
 	m_comboWeb.AddString(_T("测试视频5"));
 	m_comboWeb.SetCurSel(0);
-	GetDlgItem(IDC_BUTTON1)->ModifyStyle(0, BS_OWNERDRAW, 0);
-	GetDlgItem(IDC_BUTTON2)->ModifyStyle(0,BS_OWNERDRAW,0);
-	GetDlgItem(IDC_BUTTON3)->ModifyStyle(0, BS_OWNERDRAW, 0);
-	GetDlgItem(IDC_BUTTON5)->ModifyStyle(0, BS_OWNERDRAW, 0);
-	GetDlgItem(IDC_BUTTON6)->ModifyStyle(0, BS_OWNERDRAW, 0);
-	GetDlgItem(IDCANCEL)->ModifyStyle(0, BS_OWNERDRAW, 0);
-	GetDlgItem(IDOK)->ModifyStyle(0, BS_OWNERDRAW, 0);
-	m_Btn1.Attach(IDC_BUTTON1, this);
-	m_Btn2.Attach(IDC_BUTTON2, this);
-	m_Btn3.Attach(IDC_BUTTON3, this);
-	m_Btn4.Attach(IDOK, this);
-	m_Btn5.Attach(IDC_BUTTON5, this);
-	m_Btn6.Attach(IDC_BUTTON6, this);
-	m_Btn7.Attach(IDCANCEL, this);
-	
-	//m_Btn.SetDownColor(RGB(255,0,0));
-	m_Btn1.SetUpColor(RGB(222, 156, 83));
-	m_Btn2.SetUpColor(RGB(222, 156, 83));
-	m_Btn3.SetUpColor(RGB(222, 156, 83));
-	m_Btn4.SetUpColor(RGB(222, 156, 83));
-	m_Btn5.SetUpColor(RGB(222, 156, 83));
-	m_Btn6.SetUpColor(RGB(222, 156, 83));
-	m_Btn7.SetUpColor(RGB(222, 156, 83));
-	m_Btn1.SetDownColor(RGB(222, 156, 83));
-	m_Btn2.SetDownColor(RGB(222, 156, 83));
-	m_Btn3.SetDownColor(RGB(222, 156, 83));
-	m_Btn4.SetDownColor(RGB(222, 156, 83));
-	m_Btn5.SetDownColor(RGB(222, 156, 83));
-	m_Btn6.SetDownColor(RGB(222, 156, 83));
-	m_Btn7.SetDownColor(RGB(222, 156, 83));
-
-
-
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -225,17 +169,15 @@ void CplayvideoDlg::OnPaint()
 {
 	if (IsIconic())
 	{
-		CRect   rect;
 		CPaintDC dc(this); // 用于绘制的设备上下文
-		
+
 		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
-		
+
 		// 使图标在工作区矩形中居中
 		int cxIcon = GetSystemMetrics(SM_CXICON);
 		int cyIcon = GetSystemMetrics(SM_CYICON);
-		
+		CRect rect;
 		GetClientRect(&rect);
-		
 		int x = (rect.Width() - cxIcon + 1) / 2;
 		int y = (rect.Height() - cyIcon + 1) / 2;
 
@@ -244,11 +186,9 @@ void CplayvideoDlg::OnPaint()
 	}
 	else
 	{
-		
-	}
-		
 		CDialogEx::OnPaint();
 	}
+}
 
 //当用户拖动最小化窗口时系统调用此函数取得光标
 //显示。
@@ -297,10 +237,7 @@ void CplayvideoDlg::OnBnClickedButton1()
 	//cvRectangle(m_Frame, cvPoint(boxs[0].x, boxs[0].y), cvPoint(boxs[0].x+ boxs[0].w, boxs[0].y+ boxs[0].h), cv::Scalar(0, 255, 255), 5, 1, 0);
 	//cvRectangle(m_Frame, cvPoint(100,100), cvPoint(500, 500), cv::Scalar(255, 255, 255), 55, 1, 0);
 	for (bbox_t t : boxs) {
-		if(t.obj_id==1)
-			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0,0,255), 5, 1, 0);
-		else
-			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 255, 0), 5, 1, 0);
+		cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 255, 255), 5, 1, 0);
 	}
 	//m_Frame = &IplImage(frame);
 	m_CvvImage.CopyOf(m_Frame, 1);
@@ -325,7 +262,7 @@ void CplayvideoDlg::OnBnClickedButton2()
 	m_Bitmap1.LoadBitmap(IDB_BITMAP1);
 	MemDC.CreateCompatibleDC(NULL);
 	MemDC.SelectObject(&m_Bitmap1);
-	pDC->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), &MemDC, 0, 0, 440, 304, SRCCOPY);
+	pDC->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), &MemDC, 0, 0, 48, 48, SRCCOPY);
 }
 
 
@@ -354,7 +291,7 @@ void CplayvideoDlg::OnBnClickedOk()
 	}
 	if (!capture)
 	{
-		MessageBox(_T("请先选择视频！"));
+		MessageBox(_T("Error！"));
 		return;
 	}
 	SetTimer(1, 25, NULL);
@@ -371,10 +308,7 @@ void CplayvideoDlg::OnTimer(UINT_PTR nIDEvent)
 	CvvImage m_CvvImage;
 	boxs = detector->detect(m_Frame, 0.5);
 	for (bbox_t t : boxs) {
-		if (t.obj_id == 1)
-			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 0, 255), 5, 1, 0);
-		else
-			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 255, 0), 5, 1, 0);
+		cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 255, 255), 5, 1, 0);
 	}
 	m_CvvImage.CopyOf(m_Frame, 1);
 	if (true)
@@ -397,7 +331,7 @@ void CplayvideoDlg::OnBnClickedButton5()
 	m_Bitmap1.LoadBitmap(IDB_BITMAP1);
 	MemDC.CreateCompatibleDC(NULL);
 	MemDC.SelectObject(&m_Bitmap1);
-	pDC->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), &MemDC, 0, 0, 440, 304, SRCCOPY);
+	pDC->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), &MemDC, 0, 0, 48, 48, SRCCOPY);
 	
 }
 
@@ -408,10 +342,6 @@ void CplayvideoDlg::OnDtnDatetimechangeDatetimepicker1(NMHDR *pNMHDR, LRESULT *p
 {
 	LPNMDATETIMECHANGE pDTChange = reinterpret_cast<LPNMDATETIMECHANGE>(pNMHDR);
 	// TODO: 在此添加控件通知处理程序代码
-	CString timeFormat;
-	timeFormat = "MM/dd/yyyy   hh:mm:00 tt";
-	GetDlgItem(IDC_DATETIMEPICKER1)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
-		(LPCTSTR)timeFormat);
 	*pResult = 0;
 }
 
@@ -425,7 +355,47 @@ void CplayvideoDlg::OnCbnSelchangeCombo1()
 void CplayvideoDlg::OnBnClickedButton6()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	
+	CString strText(_T(""));
+	CString strText1(_T(""));
+	CString strText2(_T(""));
+	CString strText3(_T(""));
+	CString strText7(_T(""));
+	CString strText4(_T("总人数"));
+	CString strText5(_T("戴帽人数"));
+	CString strText6(_T("未戴帽人数"));
+	GetDlgItemText(IDC_COMBO1, strText);
+	GetDlgItemText(IDC_EDIT3, strText1);//获取edit box中的数据
+	GetDlgItemText(IDC_EDIT4, strText2);
+	GetDlgItemText(IDC_EDIT5, strText3);
+	strText7 = strText + "\r\n " + strText4 +' '+ strText1+"\r\n " + strText5 + ' ' + strText2+ "\r\n "+ strText6 + ' ' + strText3 + "\r\n ";
+
+
+	try
+
+	{
+
+		CStdioFile   file;
+
+		file.Open(_T("D:\\视频数据.txt"), CFile::modeCreate | CFile::modeWrite | CFile::typeText|CFile::modeNoTruncate);
+
+		//打开D盘的txt文件
+		file.SeekToEnd();
+		file.WriteString(strText2+ "\r\n");  //写入edit box中的数据
+		
+		
+		file.Close();
+
+	}
+
+	catch (CFileException* e)
+
+	{
+
+		e->ReportError();
+
+		e->Delete();
+
+	}
 
 }
 
@@ -452,84 +422,53 @@ void CplayvideoDlg::OnEnChangeEdit1()
 }
 
 
-
-
-
-void CplayvideoDlg::OnDtnDatetimechangeDatetimepicker2(NMHDR *pNMHDR, LRESULT *pResult)
+void CplayvideoDlg::OnBnClickedButton4()
 {
-	LPNMDATETIMECHANGE pDTChange = reinterpret_cast<LPNMDATETIMECHANGE>(pNMHDR);
 	// TODO: 在此添加控件通知处理程序代码
-	CString timeFormat;
-	timeFormat = "MM/dd/yyyy   hh:mm:00 tt";
-	GetDlgItem(IDC_DATETIMEPICKER2)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
-		(LPCTSTR)timeFormat);
-	*pResult = 0;
+	CString strText(_T(""));
+	CString strText1(_T(""));
+	CString strText2(_T(""));
+	CString strText3(_T(""));
+	CString strText7(_T(""));
+	CString strText4(_T("总人数"));
+	CString strText5(_T("戴帽人数"));
+	CString strText6(_T("未戴帽人数"));
+	CString strText8(_T(""));
+	CString strText9(_T("起始时间"));
+	CString strText10(_T("结束时间"));
+	GetDlgItemText(IDC_DATETIMEPICKER1, strText);
+	GetDlgItemText(IDC_DATETIMEPICKER2, strText8);
+	GetDlgItemText(IDC_EDIT2, strText1);//获取edit box中的数据
+	GetDlgItemText(IDC_EDIT6, strText2);
+	GetDlgItemText(IDC_EDIT7, strText3);
+	strText7 = strText9+' '+strText + "\r\n " +strText10 + ' ' + strText8 + "\r\n " + strText4 + ' ' + strText1 + "\r\n " + strText5 + ' ' + strText2 + "\r\n " + strText6 + ' ' + strText3 + "\r\n ";
+
+
+	try
+
+	{
+
+		CStdioFile   file;
+
+		file.Open(_T("D:\\摄像头数据.txt"), CFile::modeCreate | CFile::modeWrite | CFile::typeText | CFile::modeNoTruncate);
+
+		//打开D盘的txt文件
+		file.SeekToEnd();
+		file.WriteString(strText2 + "\r\n");  //写入edit box中的数据
+
+
+		file.Close();
+
+	}
+
+	catch (CFileException* e)
+
+	{
+
+		e->ReportError();
+
+		e->Delete();
+
+	}
+
 }
-
-
-
-
-
-/*void CplayvideoDlg::OnEnChangeEdit2()
-{
-	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
-	// 函数并调用 CRichEditCtrl().SetEventMask()，
-	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
-
-	// TODO:  在此添加控件通知处理程序代码
-}*/
-
-
-HBRUSH CplayvideoDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
-{
-	HBRUSH hbr = CDialogEx::OnCtlColor(pDC, pWnd, nCtlColor);
-
-	// TODO:  在此更改 DC 的任何特性
-
-
-	if (nCtlColor == CTLCOLOR_BTN)          //更改按钮颜色  
-	{
-		//pDC->SetBkMode(TRANSPARENT);  
-		pDC->SetTextColor(RGB(0, 0, 0));
-		pDC->SetBkColor(RGB(121, 121, 255));
-		HBRUSH b=CreateSolidBrush(RGB(121, 121, 255));
-		return (HBRUSH)b;
-	}
-	 else if (nCtlColor == CTLCOLOR_SCROLLBAR)  //  
-	{
-		//pDC->SetBkMode(TRANSPARENT);  
-		pDC->SetTextColor(RGB(0, 0, 0));
-		pDC->SetBkColor(RGB(233, 233, 220));
-		HBRUSH b=CreateSolidBrush(RGB(233, 233, 220));
-		return b;
-	}
-	else if (nCtlColor == CTLCOLOR_EDIT)   //更改编辑框  
-	{
-		//pDC->SetBkMode(TRANSPARENT);  
-		pDC->SetTextColor(RGB(0, 0, 0));
-		pDC->SetBkColor(RGB(246, 246, 246));
-		HBRUSH b=CreateSolidBrush(RGB(246, 246, 246));
-		return b;
-	}
-	else if (nCtlColor == CTLCOLOR_STATIC)  //更改静态文本  
-	{
-		pDC->SetTextColor(RGB(0, 0, 0));
-		pDC->SetBkColor(RGB(217, 226, 241));
-		HBRUSH b=CreateSolidBrush(RGB(217, 226, 241));
-		return b;
-	}
-	else if (nCtlColor == CTLCOLOR_DLG)   //更改对话框背景色  
-	{
-		pDC->SetTextColor(RGB(0, 0, 0));
-		pDC->SetBkColor(RGB(166, 254, 1));
-		HBRUSH b=CreateSolidBrush(RGB(213, 226, 240));
-		return b;
-	}
-	
-
-	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
-	return hbr;
-}
-
-

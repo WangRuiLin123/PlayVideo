@@ -5,15 +5,13 @@
 #pragma once
 #include "opencv2/opencv.hpp"
 #include "afxwin.h"
-#include "afxdtctl.h"
-#include "atlimage.h"
 // CplayvideoDlg 对话框
 class CplayvideoDlg : public CDialogEx
 {
 // 构造
 public:
 	CplayvideoDlg(CWnd* pParent = NULL);	// 标准构造函数
-	
+
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_PLAYVIDEO_DIALOG };
@@ -49,12 +47,5 @@ public:
 	CComboBox m_comboWeb;
 	afx_msg void OnEnChangeEdit3();
 	afx_msg void OnEnChangeEdit1();
-	//afx_msg void OnBnClickedButton4();
-	CDateTimeCtrl m_dtCtrl;
-	afx_msg void OnDtnDatetimechangeDatetimepicker2(NMHDR *pNMHDR, LRESULT *pResult);
-	CDateTimeCtrl m_cdCtrl;
-	
-	//afx_msg void OnEnChangeEdit2();
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-
+	afx_msg void OnBnClickedButton4();
 };
