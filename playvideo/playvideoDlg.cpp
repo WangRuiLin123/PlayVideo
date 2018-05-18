@@ -21,9 +21,7 @@ HDC hDC;//视频显示控件设备句柄
 CWnd *pwnd;
 CString FileName;
 CStatic *pStc;//标识图像显示的picture 控件
-<<<<<<< HEAD
-std::string cfg_file = "myyolov2-tiny.cfg";
-=======
+
 CMyButton m_Btn1;
 CMyButton m_Btn2;
 CMyButton m_Btn3;
@@ -35,8 +33,7 @@ CMyButton m_Btn7;
 
 
 
-std::string cfg_file = "yolov2-tiny.cfg";
->>>>>>> 7024b7c5db4c6c132e58b20661ce6b749a3e528a
+
 //cv::VideoCapture capture(0);
 std::string weights_file = "myyolov2-tiny_31300.weights";
 //Detector detector(cfg_file, weights_file); //生成detector
