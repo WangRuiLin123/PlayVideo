@@ -22,8 +22,11 @@ CWnd *pwnd;
 CString FileName;
 CStatic *pStc;//标识图像显示的picture 控件
 <<<<<<< HEAD
+<<<<<<< HEAD
 std::string cfg_file = "myyolov2-tiny.cfg";
 =======
+=======
+>>>>>>> 7024b7c5db4c6c132e58b20661ce6b749a3e528a
 CMyButton m_Btn1;
 CMyButton m_Btn2;
 CMyButton m_Btn3;
