@@ -21,7 +21,6 @@ HDC hDC;//视频显示控件设备句柄
 CWnd *pwnd;
 CString FileName;
 CStatic *pStc;//标识图像显示的picture 控件
-
 CMyButton m_Btn1;
 CMyButton m_Btn2;
 CMyButton m_Btn3;
@@ -33,7 +32,7 @@ CMyButton m_Btn7;
 
 
 
-
+std::string cfg_file = "myyolov2-tiny.cfg";
 //cv::VideoCapture capture(0);
 std::string weights_file = "myyolov2-tiny_31300.weights";
 //Detector detector(cfg_file, weights_file); //生成detector
@@ -150,7 +149,7 @@ BOOL CplayvideoDlg::OnInitDialog()
 	//  执行此操作
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
-
+	detector = new Detector(cfg_file, weights_file, 0);
 	// TODO: 在此添加额外的初始化代码
 	pwnd = GetDlgItem(IDC_STATIC);//访问控件的ID，即可返回该控件的指针
 	//pwnd->MoveWindow(35,30,352,288);
@@ -196,8 +195,15 @@ BOOL CplayvideoDlg::OnInitDialog()
 	m_Btn6.SetDownColor(RGB(222, 156, 83));
 	m_Btn7.SetDownColor(RGB(222, 156, 83));
 
+	CString timeFormat1;
+	timeFormat1 = "MM/dd/yyyy   hh:mm:00 tt";
+	GetDlgItem(IDC_DATETIMEPICKER1)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
+		(LPCTSTR)timeFormat1);
 
-
+	CString timeFormat2;
+	timeFormat2 = "MM/dd/yyyy   hh:mm:00 tt";
+	GetDlgItem(IDC_DATETIMEPICKER2)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
+		(LPCTSTR)timeFormat2);
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -241,7 +247,12 @@ void CplayvideoDlg::OnPaint()
 	}
 	else
 	{
-		
+		CDC MemDC;
+		CBitmap m_Bitmap1;
+		m_Bitmap1.LoadBitmap(IDB_BITMAP1);
+		MemDC.CreateCompatibleDC(NULL);
+		MemDC.SelectObject(&m_Bitmap1);
+		pDC->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), &MemDC, 0, 0, 440, 304, SRCCOPY);
 	}
 		
 		CDialogEx::OnPaint();
@@ -294,8 +305,8 @@ void CplayvideoDlg::OnBnClickedButton1()
 	//cvRectangle(m_Frame, cvPoint(boxs[0].x, boxs[0].y), cvPoint(boxs[0].x+ boxs[0].w, boxs[0].y+ boxs[0].h), cv::Scalar(0, 255, 255), 5, 1, 0);
 	//cvRectangle(m_Frame, cvPoint(100,100), cvPoint(500, 500), cv::Scalar(255, 255, 255), 55, 1, 0);
 	for (bbox_t t : boxs) {
-		if(t.obj_id==1)
-			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0,0,255), 5, 1, 0);
+		if (t.obj_id == 1)
+			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 0, 255), 5, 1, 0);
 		else
 			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 255, 0), 5, 1, 0);
 	}
