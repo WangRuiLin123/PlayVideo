@@ -32,11 +32,14 @@ CMyButton m_Btn7;
 
 
 
-std::string cfg_file = "myyolov2-tiny.cfg";
+std::string cfg_file = "myyolov3-tiny.cfg";
 //cv::VideoCapture capture(0);
-std::string weights_file = "myyolov2-tiny_31300.weights";
+std::string weights_file = "myyolov3-tiny_54600.weights";
 //Detector detector(cfg_file, weights_file); //生成detector
 Detector *detector;
+int numofall = 0;//视频中的总人数；
+int numofyes = 0;//视频中戴了安全帽的人数；
+int numofno = 0;//视频中没戴安全帽的人数
 int m;
 cv::Mat frame;
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
