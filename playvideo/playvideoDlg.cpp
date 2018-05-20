@@ -111,7 +111,7 @@ BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
 	ON_NOTIFY(DTN_DATETIMECHANGE, IDC_DATETIMEPICKER1, &CplayvideoDlg::OnDtnDatetimechangeDatetimepicker1)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CplayvideoDlg::OnCbnSelchangeCombo1)
 	ON_BN_CLICKED(IDC_BUTTON6, &CplayvideoDlg::OnBnClickedButton6)
-	ON_EN_CHANGE(IDC_EDIT3, &CplayvideoDlg::OnEnChangeEdit3)
+	//ON_EN_CHANGE(IDC_EDIT3, &CplayvideoDlg::OnEnChangeEdit3)
 	ON_EN_CHANGE(IDC_EDIT1, &CplayvideoDlg::OnEnChangeEdit1)
 	
 	ON_NOTIFY(DTN_DATETIMECHANGE, IDC_DATETIMEPICKER2, &CplayvideoDlg::OnDtnDatetimechangeDatetimepicker2)
@@ -119,6 +119,8 @@ BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
 	//ON_EN_CHANGE(IDC_EDIT2, &CplayvideoDlg::OnEnChangeEdit2)
 	ON_WM_CTLCOLOR()
 	
+	ON_WM_SIZE()
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -152,7 +154,7 @@ BOOL CplayvideoDlg::OnInitDialog()
 	//  执行此操作
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
-	detector = new Detector(cfg_file, weights_file, 0);
+	//detector = new Detector(cfg_file, weights_file, 0);
 	// TODO: 在此添加额外的初始化代码
 	pwnd = GetDlgItem(IDC_STATIC);//访问控件的ID，即可返回该控件的指针
 	//pwnd->MoveWindow(35,30,352,288);
@@ -207,7 +209,10 @@ BOOL CplayvideoDlg::OnInitDialog()
 	timeFormat2 = "MM/dd/yyyy   hh:mm:00 tt";
 	GetDlgItem(IDC_DATETIMEPICKER2)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
 		(LPCTSTR)timeFormat2);
-	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
+    return TRUE;
+
+	m_DlgRect.SetRect(0, 0, 0, 0);//初始化对话框大小存储变量 
+	
 }
 
 void CplayvideoDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -303,16 +308,16 @@ void CplayvideoDlg::OnBnClickedButton1()
 	//m=detector->get_net_height();
 	//frame = cv::Mat(m_Frame);
 	//std::vector<bbox_t> boxs;
-	boxs = detector->detect(m_Frame, 0.3);
+	//boxs = detector->detect(m_Frame, 0.3);
 	//m_Frame = &IplImage(frame);
 	//cvRectangle(m_Frame, cvPoint(boxs[0].x, boxs[0].y), cvPoint(boxs[0].x+ boxs[0].w, boxs[0].y+ boxs[0].h), cv::Scalar(0, 255, 255), 5, 1, 0);
 	//cvRectangle(m_Frame, cvPoint(100,100), cvPoint(500, 500), cv::Scalar(255, 255, 255), 55, 1, 0);
-	for (bbox_t t : boxs) {
+	/*for (bbox_t t : boxs) {
 		if (t.obj_id == 1)
 			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 0, 255), 5, 1, 0);
 		else
 			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 255, 0), 5, 1, 0);
-	}
+	}*/
 	//m_Frame = &IplImage(frame);
 	m_CvvImage.CopyOf(m_Frame, 1);
 	if (true)
@@ -380,13 +385,13 @@ void CplayvideoDlg::OnTimer(UINT_PTR nIDEvent)
 	IplImage* m_Frame;
 	m_Frame = cvQueryFrame(capture);
 	CvvImage m_CvvImage;
-	boxs = detector->detect(m_Frame, 0.5);
-	for (bbox_t t : boxs) {
+	//boxs = detector->detect(m_Frame, 0.5);
+	/*for (bbox_t t : boxs) {
 		if (t.obj_id == 1)
 			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 0, 255), 5, 1, 0);
 		else
 			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 255, 0), 5, 1, 0);
-	}
+	}*/
 	m_CvvImage.CopyOf(m_Frame, 1);
 	if (true)
 	{
@@ -441,15 +446,7 @@ void CplayvideoDlg::OnBnClickedButton6()
 }
 
 
-void CplayvideoDlg::OnEnChangeEdit3()
-{
-	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
-	// 函数并调用 CRichEditCtrl().SetEventMask()，
-	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
 
-	// TODO:  在此添加控件通知处理程序代码
-}
 
 
 void CplayvideoDlg::OnEnChangeEdit1()
@@ -543,4 +540,71 @@ HBRUSH CplayvideoDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	return hbr;
 }
 
+/*void CplayvideoDlg::repaint(UINT id, int last_Width, int now_Width, int last_Height, int now_Height)//更新控件位置和大小函数，可以根据需要自行修改  
+{
+	CRect rect;
+	CWnd *wnd = NULL;
+	wnd = GetDlgItem(id);
+	if (NULL == wnd)
+	{
+		MessageBox(_T("相应控件不存在"));
+	}
+	wnd->GetWindowRect(&rect);
+	ScreenToClient(&rect);
+	rect.left = (long)((double)rect.left / (double)last_Width*(double)now_Width);
+	rect.right = (long)((double)rect.right / (double)last_Width*(double)now_Width);
+	rect.top = (long)((double)rect.top / (double)last_Height*(double)now_Height);
+	rect.bottom = (long)((double)rect.bottom / (double)last_Height*(double)now_Height);
+	wnd->MoveWindow(&rect);
+}
 
+
+
+
+void CplayvideoDlg::OnSize(UINT nType, int cx, int cy)
+{
+	CDialogEx::OnSize(nType, cx, cy);
+
+	// TODO: 
+	if (0 == m_DlgRect.left && 0 == m_DlgRect.right  
+        && 0 == m_DlgRect.top && 0 == m_DlgRect.bottom)//第一次启动对话框时的大小变化不做处理  
+	{
+	}
+	else
+	{
+		if (0 == cx && 0 == cy)//如果是按下了最小化，则触发条件，这时不保存对话框数据  
+		{
+			return;
+		}
+		CRect rectDlgChangeSize;
+		GetClientRect(&rectDlgChangeSize);//存储对话框大小改变后对话框大小数据  
+
+		repaint(IDC_STATIC, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());//重绘函数，用以更新对话框上控件的位置和大小  
+		repaint(IDOK, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDCANCEL, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_STATIC_1, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());//重绘函数，用以更新对话框上控件的位置和大小  
+		repaint(IDC_STATIC3, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_STATIC4, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_STATIC5, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());//重绘函数，用以更新对话框上控件的位置和大小  
+		repaint(IDC_STATIC11, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_STATIC12, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_STATIC13, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());//重绘函数，用以更新对话框上控件的位置和大小  
+		repaint(IDC_STATIC6, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_STATIC8, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_STATIC10, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_BUTTON1, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_BUTTON2, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_BUTTON3, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());//重绘函数，用以更新对话框上控件的位置和大小  
+		repaint(IDC_BUTTON5, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_BUTTON6, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_EDIT1, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_DATETIMEPICKER1, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_DATETIMEPICKER2, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+		repaint(IDC_COMBO1, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+
+		
+	}
+	GetClientRect(&m_DlgRect); //save size of dialog  
+	Invalidate();//更新窗口  
+
+}*/

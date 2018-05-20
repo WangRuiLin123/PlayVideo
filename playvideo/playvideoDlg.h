@@ -47,14 +47,17 @@ public:
 	afx_msg void OnCbnSelchangeCombo1();
 	afx_msg void OnBnClickedButton6();
 	CComboBox m_comboWeb;
-	afx_msg void OnEnChangeEdit3();
+	
 	afx_msg void OnEnChangeEdit1();
-	//afx_msg void OnBnClickedButton4();
+	
 	CDateTimeCtrl m_dtCtrl;
 	afx_msg void OnDtnDatetimechangeDatetimepicker2(NMHDR *pNMHDR, LRESULT *pResult);
 	CDateTimeCtrl m_cdCtrl;
-	
-	//afx_msg void OnEnChangeEdit2();
+	CRect m_DlgRect;//存储对话框改变前大小，以供计算控件相应位置及大小时使用
+
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 
+	
+	/*void repaint(UINT id, int last_Width, int now_Width, int last_Height, int now_Height);
+	afx_msg void OnSize(UINT nType, int cx, int cy);*/
 };
