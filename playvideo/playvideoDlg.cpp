@@ -556,6 +556,7 @@ HBRUSH CplayvideoDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	rect.top = (long)((double)rect.top / (double)last_Height*(double)now_Height);
 	rect.bottom = (long)((double)rect.bottom / (double)last_Height*(double)now_Height);
 	wnd->MoveWindow(&rect);
+	
 }
 
 
@@ -601,7 +602,12 @@ void CplayvideoDlg::OnSize(UINT nType, int cx, int cy)
 		repaint(IDC_DATETIMEPICKER1, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
 		repaint(IDC_DATETIMEPICKER2, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
 		repaint(IDC_COMBO1, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
-
+		LOGFONT LogFont;
+		GetFont()->GetLogFont(&LogFont);//
+		LogFont.lfHeight += LogFont.lfHeight;
+		LogFont.lfWidth += LogFont.lfWidth;
+		m_font.CreateFontIndirect(&LogFont);
+		GetDlgItem(IDC_BUTTON1)->SetFont(&m_font);
 		
 	}
 	GetClientRect(&m_DlgRect); //save size of dialog  

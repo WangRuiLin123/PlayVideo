@@ -59,5 +59,6 @@ public:
 
 	
 	/*void repaint(UINT id, int last_Width, int now_Width, int last_Height, int now_Height);
-	afx_msg void OnSize(UINT nType, int cx, int cy);*/
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	CFont m_font;*/
 };
