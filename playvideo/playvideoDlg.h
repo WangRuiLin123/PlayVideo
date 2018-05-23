@@ -4,6 +4,7 @@
 
 #pragma once
 #include "opencv2/opencv.hpp"
+#include "opencv2/gpu/gpu.hpp"
 #include "afxwin.h"
 #include "afxdtctl.h"
 #include "atlimage.h"
@@ -61,4 +62,8 @@ public:
 	/*void repaint(UINT id, int last_Width, int now_Width, int last_Height, int now_Height);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	CFont m_font;*/
+	afx_msg void OnStnClickedStatic6();
+	int m_numofall;
+	int m_numofyes;
+	int m_numofno;
 };

@@ -33,8 +33,10 @@ CMyButton m_Btn7;
 
 
 std::string cfg_file = "myyolov3-tiny.cfg";
+//std::string cfg_file = "yolov3-tiny.cfg";
+//std::string weights_file = "yolov3-tiny.weights";
 //cv::VideoCapture capture(0);
-std::string weights_file = "myyolov3-tiny_54600.weights";
+std::string weights_file = "myyolov3-tiny_57400.weights";
 //Detector detector(cfg_file, weights_file); //生成detector
 Detector *detector;
 int numofall = 0;//视频中的总人数；
@@ -83,6 +85,9 @@ END_MESSAGE_MAP()
 
 CplayvideoDlg::CplayvideoDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PLAYVIDEO_DIALOG, pParent)
+	, m_numofall(0)
+	, m_numofyes(0)
+	, m_numofno(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDI_ICON1);
 }
@@ -95,6 +100,9 @@ void CplayvideoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO1, m_comboWeb);
 	DDX_Control(pDX, IDC_DATETIMEPICKER1, m_dtCtrl);
 	DDX_Control(pDX, IDC_DATETIMEPICKER2, m_cdCtrl);
+	DDX_Text(pDX, IDC_STATIC6, m_numofall);
+	DDX_Text(pDX, IDC_STATIC8, m_numofyes);
+	DDX_Text(pDX, IDC_STATIC10, m_numofno);
 }
 
 BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
@@ -121,6 +129,7 @@ BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
 	
 	ON_WM_SIZE()
 	ON_WM_SIZE()
+	ON_STN_CLICKED(IDC_STATIC6, &CplayvideoDlg::OnStnClickedStatic6)
 END_MESSAGE_MAP()
 
 
@@ -154,7 +163,7 @@ BOOL CplayvideoDlg::OnInitDialog()
 	//  执行此操作
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
-	//detector = new Detector(cfg_file, weights_file, 0);
+	detector = new Detector(cfg_file, weights_file, 0);
 	// TODO: 在此添加额外的初始化代码
 	pwnd = GetDlgItem(IDC_STATIC);//访问控件的ID，即可返回该控件的指针
 	//pwnd->MoveWindow(35,30,352,288);
@@ -291,33 +300,27 @@ void CplayvideoDlg::OnBnClickedButton1()
 		return;
 	}
 
-	// 测试  
-	//cv::VideoCapture capture(0);//打开摄像头  
-	/*if (!capture.isOpened())
-	{
-	std::cout<< "读摄像头有误" <<std::endl;
-	return ;
-	}*/
-	// 测试  
+
 	IplImage* m_Frame;
-	//cv::Mat frame;
-	//capture >> frame;
-	//capture.release();
+	
 	m_Frame = cvQueryFrame(capture);
 	CvvImage m_CvvImage;
-	//m=detector->get_net_height();
-	//frame = cv::Mat(m_Frame);
-	//std::vector<bbox_t> boxs;
-	//boxs = detector->detect(m_Frame, 0.3);
-	//m_Frame = &IplImage(frame);
-	//cvRectangle(m_Frame, cvPoint(boxs[0].x, boxs[0].y), cvPoint(boxs[0].x+ boxs[0].w, boxs[0].y+ boxs[0].h), cv::Scalar(0, 255, 255), 5, 1, 0);
-	//cvRectangle(m_Frame, cvPoint(100,100), cvPoint(500, 500), cv::Scalar(255, 255, 255), 55, 1, 0);
-	/*for (bbox_t t : boxs) {
+	
+	boxs = detector->detect(m_Frame);
+	m_numofall = boxs.size();
+	m_numofno = m_numofyes=0;
+	for (bbox_t t : boxs) {
 		if (t.obj_id == 1)
+		{
+			m_numofno++;
 			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 0, 255), 5, 1, 0);
+		}
 		else
+		{
+			m_numofyes++;
 			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 255, 0), 5, 1, 0);
-	}*/
+		}
+	}
 	//m_Frame = &IplImage(frame);
 	m_CvvImage.CopyOf(m_Frame, 1);
 	if (true)
@@ -325,7 +328,7 @@ void CplayvideoDlg::OnBnClickedButton1()
 		m_CvvImage.DrawToHDC(hDC, &rect);
 		//cvWaitKey(10);
 	}
-
+	UpdateData(false);
 	// 设置计时器,每10ms触发一次事件
 	SetTimer(1, 20, NULL);
 
@@ -336,6 +339,7 @@ void CplayvideoDlg::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	cvReleaseCapture(&capture);
+	KillTimer(1);
 	CDC MemDC;
 	CBitmap m_Bitmap1;
 	m_Bitmap1.LoadBitmap(IDB_BITMAP1);
@@ -359,6 +363,13 @@ void CplayvideoDlg::OnBnClickedOk()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	IplImage* img = cvLoadImage(((LPCTSTR)FileName));
+	/*boxs = detector->detect(img);
+	for (bbox_t t : boxs) {
+		if (t.obj_id == 1)
+			cvRectangle(img, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 0, 255), 5, 1, 0);
+		else
+			cvRectangle(img, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 255, 0), 5, 1, 0);
+	}*/
 	CvvImage cvvImg;
 	cvvImg.CopyOf(img);
 	cvvImg.DrawToHDC(hDC, &rect);
@@ -367,13 +378,14 @@ void CplayvideoDlg::OnBnClickedOk()
 	if (!capture)
 	{
 		capture = cvCreateFileCapture(((LPCTSTR)FileName));
+		
 	}
 	if (!capture)
 	{
 		MessageBox(_T("请先选择视频！"));
 		return;
 	}
-	SetTimer(1, 25, NULL);
+	SetTimer(1, 20, NULL);
 }
 	
 
@@ -385,19 +397,43 @@ void CplayvideoDlg::OnTimer(UINT_PTR nIDEvent)
 	IplImage* m_Frame;
 	m_Frame = cvQueryFrame(capture);
 	CvvImage m_CvvImage;
-	//boxs = detector->detect(m_Frame, 0.5);
-	/*for (bbox_t t : boxs) {
-		if (t.obj_id == 1)
-			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 0, 255), 5, 1, 0);
-		else
-			cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 255, 0), 5, 1, 0);
-	}*/
-	m_CvvImage.CopyOf(m_Frame, 1);
-	if (true)
+	if (m_Frame != NULL)
 	{
-		m_CvvImage.DrawToHDC(hDC, &rect);
-		//cvWaitKey(10);
+		boxs = detector->detect(m_Frame, 0.3);
+		m_numofall = boxs.size();
+		m_numofno = m_numofyes = 0;
+		for (bbox_t t : boxs) {
+			if (t.obj_id == 1)
+			{
+				m_numofno++;
+				cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 0, 255), 5, 1, 0);
+			}
+			else
+			{
+				m_numofyes++;
+				cvRectangle(m_Frame, cvPoint(t.x, t.y), cvPoint(t.x + t.w, t.y + t.h), cv::Scalar(0, 255, 0), 5, 1, 0);
+			}
+		}
+		m_CvvImage.CopyOf(m_Frame, 1);
+		if (true)
+		{
+			m_CvvImage.DrawToHDC(hDC, &rect);
+			//cvWaitKey(10);
+		}
+		UpdateData(false);
 	}
+	else
+	{
+		cvReleaseCapture(&capture);
+		KillTimer(1);
+		CDC MemDC;
+		CBitmap m_Bitmap1;
+		m_Bitmap1.LoadBitmap(IDB_BITMAP1);
+		MemDC.CreateCompatibleDC(NULL);
+		MemDC.SelectObject(&m_Bitmap1);
+		pDC->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), &MemDC, 0, 0, 440, 304, SRCCOPY);
+	}
+	
 	CDialogEx::OnTimer(nIDEvent);
 }
 
@@ -408,6 +444,7 @@ void CplayvideoDlg::OnBnClickedButton5()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	cvReleaseCapture(&capture);
+	KillTimer(1);
 	CDC MemDC;
 	CBitmap m_Bitmap1;
 	m_Bitmap1.LoadBitmap(IDB_BITMAP1);
@@ -614,3 +651,9 @@ void CplayvideoDlg::OnSize(UINT nType, int cx, int cy)
 	Invalidate();//更新窗口  
 
 }*/
+
+
+void CplayvideoDlg::OnStnClickedStatic6()
+{
+	// TODO: 在此添加控件通知处理程序代码
+}
