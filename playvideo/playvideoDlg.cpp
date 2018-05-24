@@ -11,9 +11,15 @@
 #include "yolo_v2_class.hpp"
 #include <vector>
 #include "MyButton.h"
+#include "mysql++.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+#define DATEBASE_NAME "安全帽检测"
+#define DATEBASE_IP "47.101.57.53"
+#define DATEBASE_USERNAME "root"
+#define DATEBASE_PWD "123456"
+#define DATEBASE_PORT "3306"
 CvCapture* capture; //视频获取结构
 CRect rect;//矩形类CRect也为一个没有基类的独立类，封装了RECT结构，有成员变量left、top、right和bottom
 CDC *pDC;//视频显示控件设备上下文
@@ -28,7 +34,12 @@ CMyButton m_Btn4;
 CMyButton m_Btn5;
 CMyButton m_Btn6;
 CMyButton m_Btn7;
+mysqlpp::Connection connection(false);
+//boolean b= connection.connect("安全帽检测", "localhost", "zhijian", "123456", 3306);
 
+
+
+using namespace std;
 
 
 
@@ -36,7 +47,7 @@ std::string cfg_file = "myyolov3-tiny.cfg";
 //std::string cfg_file = "yolov3-tiny.cfg";
 //std::string weights_file = "yolov3-tiny.weights";
 //cv::VideoCapture capture(0);
-std::string weights_file = "myyolov3-tiny_57400.weights";
+std::string weights_file = "myyolov3-tiny_58000.weights";
 //Detector detector(cfg_file, weights_file); //生成detector
 Detector *detector;
 int numofall = 0;//视频中的总人数；
@@ -221,7 +232,13 @@ BOOL CplayvideoDlg::OnInitDialog()
     return TRUE;
 
 	m_DlgRect.SetRect(0, 0, 0, 0);//初始化对话框大小存储变量 
+	if (connection.connect(DATEBASE_NAME, DATEBASE_IP, DATEBASE_USERNAME, DATEBASE_PWD))
+		//cout << "connect success !!!" << endl;
+		int i = 0;
 	
+	char* sql = "select * from test";
+	mysqlpp::Query  query = connection.query(sql);
+	//query <<"select * from test" ;
 }
 
 void CplayvideoDlg::OnSysCommand(UINT nID, LPARAM lParam)

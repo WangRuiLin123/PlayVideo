@@ -6,6 +6,7 @@
 #pragma comment(lib,"vfw32.lib")
 #pragma comment(lib,"comctl32.lib")
 #pragma  comment(lib,"yolo_cpp_dll.lib")
+#pragma  comment(lib,"MYSQLPP.lib")
 #ifndef __AFXWIN_H__
 #error "在包含此文件之前包含“stdafx.h”以生成 PCH 文件"
 #endif
