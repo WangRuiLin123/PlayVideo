@@ -11,15 +11,13 @@
 #include "yolo_v2_class.hpp"
 #include <vector>
 #include "MyButton.h"
-#include "mysql++.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-#define DATEBASE_NAME "安全帽检测"
-#define DATEBASE_IP "47.101.57.53"
-#define DATEBASE_USERNAME "root"
-#define DATEBASE_PWD "123456"
-#define DATEBASE_PORT "3306"
+#define DATABASE_NAME "Hat"
+#define DATABASE_HOSTNAME "47.101.57.53:3306"
+#define DATABASE_USERNAME "root"
+#define DATABASE_PWD "123456"
 CvCapture* capture; //视频获取结构
 CRect rect;//矩形类CRect也为一个没有基类的独立类，封装了RECT结构，有成员变量left、top、right和bottom
 CDC *pDC;//视频显示控件设备上下文
@@ -34,26 +32,30 @@ CMyButton m_Btn4;
 CMyButton m_Btn5;
 CMyButton m_Btn6;
 CMyButton m_Btn7;
-mysqlpp::Connection connection(false);
 //boolean b= connection.connect("安全帽检测", "localhost", "zhijian", "123456", 3306);
-
-
+volatile BOOL m_bRun1;
+volatile BOOL m_bRun2;
+//boolean b;
 
 using namespace std;
+sql::Driver *driver;
+sql::Connection *con;
+sql::Statement *stmt;
+sql::ResultSet *res;
+sql::PreparedStatement  *prep_stmt1;
+std::string sql1 = "INSERT INTO result (numofall, numofyes, numofno) VALUE (?, ?, ?); ";
 
-
-
-std::string cfg_file = "myyolov3-tiny.cfg";
+std::string cfg_file = "myyolov3-tiny-person.cfg";
+std::string weights_file = "myyolov3-tiny-person_54600.weights";
+//std::string cfg_file = "myyolov3-tiny.cfg";
 //std::string cfg_file = "yolov3-tiny.cfg";
 //std::string weights_file = "yolov3-tiny.weights";
 //cv::VideoCapture capture(0);
-std::string weights_file = "myyolov3-tiny_58000.weights";
+//std::string weights_file = "myyolov3-tiny_62600.weights";
 //Detector detector(cfg_file, weights_file); //生成detector
 Detector *detector;
-int numofall = 0;//视频中的总人数；
-int numofyes = 0;//视频中戴了安全帽的人数；
-int numofno = 0;//视频中没戴安全帽的人数
-int m;
+
+
 cv::Mat frame;
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 std::vector<bbox_t> boxs;
@@ -219,26 +221,45 @@ BOOL CplayvideoDlg::OnInitDialog()
 	m_Btn5.SetDownColor(RGB(222, 156, 83));
 	m_Btn6.SetDownColor(RGB(222, 156, 83));
 	m_Btn7.SetDownColor(RGB(222, 156, 83));
-
+	m_DlgRect.SetRect(0, 0, 0, 0);//初始化对话框大小存储变量 
+	
 	CString timeFormat1;
-	timeFormat1 = "MM/dd/yyyy   hh:mm:00 tt";
+	timeFormat1 = "MM/dd/yyyy   hh:mm tt";
 	GetDlgItem(IDC_DATETIMEPICKER1)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
 		(LPCTSTR)timeFormat1);
 
 	CString timeFormat2;
-	timeFormat2 = "MM/dd/yyyy   hh:mm:00 tt";
+	timeFormat2 = "MM/dd/yyyy   hh:mm tt";
 	GetDlgItem(IDC_DATETIMEPICKER2)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
 		(LPCTSTR)timeFormat2);
+
+	
+	try {// 创建连接 
+		driver = get_driver_instance();
+		con = driver->connect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PWD);
+		// 连接 MySQL 数据库 test  
+		con->setSchema("hat");
+		prep_stmt1 = con->prepareStatement(sql1);
+		//stmt = con->createStatement();
+		//stmt->execute("USE Hat");
+		
+	}
+	catch (sql::SQLException &e) {
+		//cout << "# ERR: SQLException in " << __FILE__;
+		//cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
+		//cout << "# ERR: " << e.what();
+		//cout << " (MySQL error code: " << e.getErrorCode();
+		//cout << ", SQLState: " << e.getSQLState() << " )" << endl;
+		return TRUE;
+	}
     return TRUE;
 
-	m_DlgRect.SetRect(0, 0, 0, 0);//初始化对话框大小存储变量 
-	if (connection.connect(DATEBASE_NAME, DATEBASE_IP, DATEBASE_USERNAME, DATEBASE_PWD))
-		//cout << "connect success !!!" << endl;
-		int i = 0;
 	
-	char* sql = "select * from test";
-	mysqlpp::Query  query = connection.query(sql);
-	//query <<"select * from test" ;
+
+	
+	
+	
+	
 }
 
 void CplayvideoDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -304,6 +325,8 @@ HCURSOR CplayvideoDlg::OnQueryDragIcon()
 void CplayvideoDlg::OnBnClickedButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	m_bRun1 = FALSE;
+	m_bRun2 = FALSE;
 	cvReleaseCapture(&capture);
 	if (!capture)
 	{
@@ -346,8 +369,9 @@ void CplayvideoDlg::OnBnClickedButton1()
 		//cvWaitKey(10);
 	}
 	UpdateData(false);
-	// 设置计时器,每10ms触发一次事件
-	SetTimer(1, 20, NULL);
+	// 设置计时器,每0ms触发一次事件
+	SetTimer(1, 0, NULL);
+	AfxBeginThread((AFX_THREADPROC)ThreadFunc1, this);
 
 
 }
@@ -357,6 +381,8 @@ void CplayvideoDlg::OnBnClickedButton2()
 	// TODO: 在此添加控件通知处理程序代码
 	cvReleaseCapture(&capture);
 	KillTimer(1);
+	m_bRun1 = FALSE;
+	m_bRun2 = FALSE;
 	CDC MemDC;
 	CBitmap m_Bitmap1;
 	m_Bitmap1.LoadBitmap(IDB_BITMAP1);
@@ -372,6 +398,7 @@ void CplayvideoDlg::OnBnClickedButton3()
 	CFileDialog dlg(TRUE);
 	if (dlg.DoModal() == IDOK)
 		FileName = dlg.GetPathName();
+	
 	SetDlgItemText(IDC_EDIT1, LPCTSTR(FileName));
 }
 
@@ -379,6 +406,8 @@ void CplayvideoDlg::OnBnClickedButton3()
 void CplayvideoDlg::OnBnClickedOk()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	m_bRun1 = FALSE;
+	m_bRun2 = FALSE;
 	IplImage* img = cvLoadImage(((LPCTSTR)FileName));
 	/*boxs = detector->detect(img);
 	for (bbox_t t : boxs) {
@@ -402,7 +431,9 @@ void CplayvideoDlg::OnBnClickedOk()
 		MessageBox(_T("请先选择视频！"));
 		return;
 	}
-	SetTimer(1, 20, NULL);
+	SetTimer(1, 0, NULL);
+	
+	
 }
 	
 
@@ -462,6 +493,8 @@ void CplayvideoDlg::OnBnClickedButton5()
 	// TODO: 在此添加控件通知处理程序代码
 	cvReleaseCapture(&capture);
 	KillTimer(1);
+	m_bRun1 = FALSE;
+	m_bRun2 = FALSE;
 	CDC MemDC;
 	CBitmap m_Bitmap1;
 	m_Bitmap1.LoadBitmap(IDB_BITMAP1);
@@ -673,4 +706,30 @@ void CplayvideoDlg::OnSize(UINT nType, int cx, int cy)
 void CplayvideoDlg::OnStnClickedStatic6()
 {
 	// TODO: 在此添加控件通知处理程序代码
+}
+
+void CplayvideoDlg::ThreadFunc1(void *param)
+
+{
+
+	CplayvideoDlg  *dlg = (CplayvideoDlg  *)param;
+	m_bRun1 = TRUE;
+	while (m_bRun1)
+
+	{
+
+		
+		prep_stmt1->setInt(1, dlg->m_numofall);
+		prep_stmt1->setInt(2, dlg->m_numofyes);
+		prep_stmt1->setInt(3, dlg->m_numofno);
+		prep_stmt1->execute();
+		//mysqlpp::Query  query = connection.query(sql);
+		//stmt->executeQuery(sql1);
+		
+		//stmt->execute(sql1);
+
+		Sleep(1000);
+
+	}
+
 }

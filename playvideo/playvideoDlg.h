@@ -8,7 +8,15 @@
 #include "afxwin.h"
 #include "afxdtctl.h"
 #include "atlimage.h"
+#include "mysql_connection.h"
+
+#include <cppconn/driver.h>
+#include <cppconn/exception.h>
+#include <cppconn/resultset.h>
+#include <cppconn/statement.h>
+#include <cppconn/prepared_statement.h>
 // CplayvideoDlg 对话框
+
 class CplayvideoDlg : public CDialogEx
 {
 // 构造
@@ -27,7 +35,8 @@ public:
 // 实现
 protected:
 	HICON m_hIcon;
-
+	HANDLE hThread;
+	DWORD ThreadID;
 	// 生成的消息映射函数
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
@@ -48,7 +57,8 @@ public:
 	afx_msg void OnCbnSelchangeCombo1();
 	afx_msg void OnBnClickedButton6();
 	CComboBox m_comboWeb;
-	
+	static void ThreadFunc1(void *param);
+	static void ThreadFunc2(void *param);
 	afx_msg void OnEnChangeEdit1();
 	
 	CDateTimeCtrl m_dtCtrl;
