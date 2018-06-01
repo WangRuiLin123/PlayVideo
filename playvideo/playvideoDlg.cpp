@@ -1,7 +1,7 @@
 
 // playvideoDlg.cpp : 实现文件
 //
-
+#include <time.h>
 #include "stdafx.h"
 #include "playvideo.h"
 #include "playvideoDlg.h"
@@ -40,13 +40,27 @@ volatile BOOL m_bRun2;
 using namespace std;
 sql::Driver *driver;
 sql::Connection *con;
-sql::Statement *stmt;
-sql::ResultSet *res;
+sql::Statement *stm;
+
 sql::PreparedStatement  *prep_stmt1;
-std::string sql1 = "INSERT INTO result (numofall, numofyes, numofno) VALUE (?, ?, ?); ";
+std::string sql1 = "INSERT INTO result (numofall, numofyes, numofno) VALUE (?, ?, ?); ";//摄像头识别结果
+
+sql::PreparedStatement  *prep_stmt2;
+std::string sql2 = "INSERT IGNORE INTO videos (url) VALUE (?); ";//视频文件加入videos表
+
+//sql::PreparedStatement  *prep_stmt3;
+std::string sql3 = "CREATE TABLE If Not Exists '%d' ('time' time NOT NULL,'numofall' smallint(6) NOT NULL DEFAULT '0','numofyes' smallint(6) NOT NULL DEFAULT '0','numofno' smallint(6) NOT NULL DEFAULT '0',PRIMARY KEY('time')) ENGINE = InnoDB DEFAULT CHARSET = utf8";//根据视频文件的index创建表
+
+sql::PreparedStatement  *prep_stmt4;
+std::string sql4 = "SELECT indexoftable FROM videos WHERE url= (?); ";//查找videos中url对应的的indexoftable
+
+//sql::PreparedStatement  *prep_stmt5;
+std::string sql5 = "INSERT IGNORE INTO '%d '(time,numofall, numofyes, numofno) VALUE (%s,%d, %d, %d); ";//视频文件识别结果
+
+sql::ResultSet  *res;//mysql结果
 
 std::string cfg_file = "myyolov3-tiny-person.cfg";
-std::string weights_file = "myyolov3-tiny-person_54600.weights";
+std::string weights_file = "myyolov3-tiny-person_113200.weights";
 //std::string cfg_file = "myyolov3-tiny.cfg";
 //std::string cfg_file = "yolov3-tiny.cfg";
 //std::string weights_file = "yolov3-tiny.weights";
@@ -239,7 +253,14 @@ BOOL CplayvideoDlg::OnInitDialog()
 		con = driver->connect(DATABASE_HOSTNAME, DATABASE_USERNAME, DATABASE_PWD);
 		// 连接 MySQL 数据库 test  
 		con->setSchema("hat");
+		
 		prep_stmt1 = con->prepareStatement(sql1);
+		prep_stmt2 = con->prepareStatement(sql2);
+		//prep_stmt3 = con->prepareStatement(sql3);
+		prep_stmt4 = con->prepareStatement(sql4);
+		stm = con->createStatement();
+		//stm->execute("SET NAMES gbk");
+		//prep_stmt5 = con->prepareStatement(sql5);
 		//stmt = con->createStatement();
 		//stmt->execute("USE Hat");
 		
@@ -432,7 +453,7 @@ void CplayvideoDlg::OnBnClickedOk()
 		return;
 	}
 	SetTimer(1, 0, NULL);
-	
+	AfxBeginThread((AFX_THREADPROC)ThreadFunc2, this);//异步线程
 	
 }
 	
@@ -447,7 +468,7 @@ void CplayvideoDlg::OnTimer(UINT_PTR nIDEvent)
 	CvvImage m_CvvImage;
 	if (m_Frame != NULL)
 	{
-		boxs = detector->detect(m_Frame, 0.3);
+		boxs = detector->detect(m_Frame);
 		m_numofall = boxs.size();
 		m_numofno = m_numofyes = 0;
 		for (bbox_t t : boxs) {
@@ -473,6 +494,8 @@ void CplayvideoDlg::OnTimer(UINT_PTR nIDEvent)
 	else
 	{
 		cvReleaseCapture(&capture);
+		m_bRun1 = FALSE;
+		m_bRun2 = FALSE;
 		KillTimer(1);
 		CDC MemDC;
 		CBitmap m_Bitmap1;
@@ -731,5 +754,90 @@ void CplayvideoDlg::ThreadFunc1(void *param)
 		Sleep(1000);
 
 	}
+
+}
+void CplayvideoDlg::ThreadFunc2(void *param)
+
+{
+
+	CplayvideoDlg  *dlg = (CplayvideoDlg  *)param;
+
+
+
+
+	CString str, str2;
+	//USES_CONVERSION;
+	prep_stmt2->setString(1, (LPCSTR)(CStringA)(FileName));
+	prep_stmt2->execute();
+
+	prep_stmt4->setString(1, (LPCSTR)(CStringA)(FileName));
+	/*try {
+		str.Format(_T("INSERT IGNORE INTO videos (url) VALUE '%s'; "), (LPCSTR)(CStringA)(FileName));
+		stm->execute((LPCSTR)(CStringA)(str));
+		str.Format(_T("SELECT indexoftable FROM videos WHERE url= '%s'; "), (LPCSTR)(CStringA)(FileName));
+		res = stm->executeQuery((LPCSTR)(CStringA)(str));
+	}
+	catch (sql::SQLException e) {
+
+	}*/
+	int indexoftable;
+	res = prep_stmt4->executeQuery();
+	while (res->next())
+	{
+		indexoftable = res->getInt(1);
+
+	}
+
+
+	str.Format(_T("CREATE TABLE If Not Exists n%.5d (time time NOT NULL,numofall smallint(6) NOT NULL DEFAULT '0',numofyes smallint(6) NOT NULL DEFAULT '0',numofno smallint(6) NOT NULL DEFAULT '0',PRIMARY KEY(time)) ENGINE = InnoDB DEFAULT CHARSET = gbk;"), indexoftable);
+	//prep_stmt3->setInt(1, indexoftable);
+	//prep_stmt3->execute();
+	try {
+		stm->execute((LPCSTR)(CStringA)(str));
+	}
+	catch (sql::SQLException e) {
+
+	}
+	m_bRun2 = TRUE;
+	double time;
+	int seconds = 0;
+	int hour;
+	int min;
+	while (m_bRun2)
+	{
+		time = cvGetCaptureProperty(capture, CV_CAP_PROP_POS_MSEC);
+		seconds = time / 1000;
+
+		hour = seconds / 3600;
+		seconds %= 3600;
+
+		min = seconds / 60;
+
+		seconds %= 60;
+
+		str2.Format(_T("%.2d%.2d%.2d"), hour, min, seconds);
+		str.Format(_T("INSERT IGNORE INTO n%.5d (time,numofall, numofyes, numofno) VALUE (%s,%d, %d, %d); "), indexoftable, (LPCSTR)(CStringA)(str2), dlg->m_numofall, dlg->m_numofyes, dlg->m_numofno);
+		//prep_stmt5->setInt(1, indexoftable);
+		//prep_stmt5->setString(2, (LPCSTR)(CStringA)str);
+		//prep_stmt5->setInt(3, dlg->m_numofall);
+		//prep_stmt5->setInt(4, dlg->m_numofyes);
+		//prep_stmt5->setInt(5, dlg->m_numofno);
+		//prep_stmt5->execute();
+		try {
+			stm->execute((LPCSTR)(CStringA)(str));
+		}
+		catch (sql::SQLException e) {
+
+		}
+		Sleep(1000);
+	}
+	//mysqlpp::Query  query = connection.query(sql);
+	//stmt->executeQuery(sql1);
+
+	//stmt->execute(sql1);
+
+
+
+
 
 }
