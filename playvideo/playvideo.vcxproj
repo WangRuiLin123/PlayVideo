@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CvvImage.h" />
+    <ClInclude Include="MyButton.h" />
     <ClInclude Include="playvideo.h" />
     <ClInclude Include="playvideoDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -77,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CvvImage.cpp" />
+    <ClCompile Include="MyButton.cpp" />
     <ClCompile Include="playvideo.cpp" />
     <ClCompile Include="playvideoDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -91,6 +93,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\bitmap1.bmp" />
+    <Image Include="res\IMG20180518223623.bmp" />
+    <Image Include="res\ooopic_1526400670.ico" />
     <Image Include="res\playvideo.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

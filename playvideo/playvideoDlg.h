@@ -34,6 +34,7 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
+	
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedButton2();
 	afx_msg void OnBnClickedButton3();
@@ -47,18 +48,32 @@ public:
 	afx_msg void OnCbnSelchangeCombo1();
 	afx_msg void OnBnClickedButton6();
 	CComboBox m_comboWeb;
-	
+	void OnMatch();
 	afx_msg void OnEnChangeEdit1();
-	
+	void AddPitcure();
 	CDateTimeCtrl m_dtCtrl;
 	afx_msg void OnDtnDatetimechangeDatetimepicker2(NMHDR *pNMHDR, LRESULT *pResult);
 	CDateTimeCtrl m_cdCtrl;
 	CRect m_DlgRect;//存储对话框改变前大小，以供计算控件相应位置及大小时使用
 
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-
 	
-	/*void repaint(UINT id, int last_Width, int now_Width, int last_Height, int now_Height);
+	void repaint(UINT id, int last_Width, int now_Width, int last_Height, int now_Height);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	CFont m_font;*/
+	
+	
+	CFont m_font;
+	
+	//afx_msg void OnBnClickedCancel();
+	CStatic m_ctrlPic;
+	/*afx_msg void OnStnClickedStatic6();
+	afx_msg void OnStnClickedStatic3();
+	afx_msg void OnStnClickedStatic8();
+	afx_msg void OnStnClickedStatic10();
+	afx_msg void OnStnClickedStatic12();*/
+	CScrollBar m_horiScrollbar;
+	//afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+	
+
+	afx_msg void OnStnClickedStatic1();
 };
