@@ -60,7 +60,7 @@ std::string sql5 = "INSERT IGNORE INTO '%d '(time,numofall, numofyes, numofno) V
 sql::ResultSet  *res;//mysql结果
 
 std::string cfg_file = "myyolov3-tiny-person.cfg";
-std::string weights_file = "myyolov3-tiny-person_14600.weights";
+std::string weights_file = "myyolov3-tiny-person_113200.weights";
 //std::string cfg_file = "myyolov3-tiny.cfg";
 //std::string cfg_file = "yolov3-tiny.cfg";
 //std::string weights_file = "yolov3-tiny.weights";
@@ -259,7 +259,7 @@ BOOL CplayvideoDlg::OnInitDialog()
 		//prep_stmt3 = con->prepareStatement(sql3);
 		prep_stmt4 = con->prepareStatement(sql4);
 		stm = con->createStatement();
-		stm->execute("SET NAMES gbk");
+		//stm->execute("SET NAMES gbk");
 		//prep_stmt5 = con->prepareStatement(sql5);
 		//stmt = con->createStatement();
 		//stmt->execute("USE Hat");
@@ -429,7 +429,7 @@ void CplayvideoDlg::OnBnClickedOk()
 	// TODO: 在此添加控件通知处理程序代码
 	m_bRun1 = FALSE;
 	m_bRun2 = FALSE;
-	IplImage* img = cvLoadImage(((LPCSTR)(CStringA)FileName));
+	IplImage* img = cvLoadImage(((LPCTSTR)FileName));
 	/*boxs = detector->detect(img);
 	for (bbox_t t : boxs) {
 		if (t.obj_id == 1)
@@ -444,7 +444,7 @@ void CplayvideoDlg::OnBnClickedOk()
 	cvReleaseCapture(&capture);
 	if (!capture)
 	{
-		capture = cvCreateFileCapture(((LPCSTR)(CStringA)FileName));
+		capture = cvCreateFileCapture(((LPCTSTR)FileName));
 		
 	}
 	if (!capture)
@@ -767,10 +767,10 @@ void CplayvideoDlg::ThreadFunc2(void *param)
 
 	CString str, str2;
 	//USES_CONVERSION;
-	prep_stmt2->setString(1, (LPCSTR)(FileName));
+	prep_stmt2->setString(1, (LPCSTR)(CStringA)(FileName));
 	prep_stmt2->execute();
-	
-	prep_stmt4->setString(1, (LPCSTR)(FileName));
+
+	prep_stmt4->setString(1, (LPCSTR)(CStringA)(FileName));
 	/*try {
 		str.Format(_T("INSERT IGNORE INTO videos (url) VALUE '%s'; "), (LPCSTR)(CStringA)(FileName));
 		stm->execute((LPCSTR)(CStringA)(str));
@@ -781,12 +781,7 @@ void CplayvideoDlg::ThreadFunc2(void *param)
 
 	}*/
 	int indexoftable;
-	try { 
-		res = prep_stmt4->executeQuery(); 
-	}
-	catch (sql::SQLException e) {
-
-	}
+	res = prep_stmt4->executeQuery();
 	while (res->next())
 	{
 		indexoftable = res->getInt(1);
@@ -807,7 +802,7 @@ void CplayvideoDlg::ThreadFunc2(void *param)
 	double time;
 	int seconds = 0;
 	int hour;
-	int min;                                                                               
+	int min;
 	while (m_bRun2)
 	{
 		time = cvGetCaptureProperty(capture, CV_CAP_PROP_POS_MSEC);

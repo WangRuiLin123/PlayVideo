@@ -39,7 +39,6 @@ void CMyButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	//同时将此文字的背景色设为透明,这样,按钮上仅会显示文字
 	const int bufSize = 512;
 	TCHAR buffer[bufSize];
-	//CHAR buffer[bufSize]；
 	GetWindowText(buffer, bufSize);
 	int size = strlen(buffer);   //得到长度
 	DrawText(lpDrawItemStruct->hDC, buffer, size, &lpDrawItemStruct->rcItem, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_TABSTOP);   //绘制文字
