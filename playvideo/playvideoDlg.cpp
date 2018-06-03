@@ -55,18 +55,20 @@ std::string sql3 = "CREATE TABLE If Not Exists '%d' ('time' time NOT NULL,'numof
 sql::PreparedStatement  *prep_stmt4;
 std::string sql4 = "SELECT indexoftable FROM videos WHERE url= (?); ";//查找videos中url对应的的indexoftable
 
-
+<<<<<<< HEAD
+std::string cfg_file = "myyolov3-tiny.cfg";
+=======
 //sql::PreparedStatement  *prep_stmt5;
 std::string sql5 = "INSERT IGNORE INTO '%d '(time,numofall, numofyes, numofno) VALUE (%s,%d, %d, %d); ";//视频文件识别结果
 
 sql::ResultSet  *res;//mysql结果
 
 std::string cfg_file = "myyolov3-tiny-person.cfg";
-std::string weights_file = "myyolov3-tiny-person_113200.weights";
+std::string weights_file = "myyolov3-tiny-person_14600.weights";
 //std::string cfg_file = "myyolov3-tiny.cfg";
 //std::string cfg_file = "yolov3-tiny.cfg";
 //std::string weights_file = "yolov3-tiny.weights";
-
+>>>>>>> e6fa2d5f5d3c14c50f1d3111a71fc5a34eb6e614
 //cv::VideoCapture capture(0);
 //std::string weights_file = "myyolov3-tiny_62600.weights";
 //Detector detector(cfg_file, weights_file); //生成detector
@@ -130,14 +132,14 @@ void CplayvideoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO1, m_comboWeb);
 	DDX_Control(pDX, IDC_DATETIMEPICKER1, m_dtCtrl);
 	DDX_Control(pDX, IDC_DATETIMEPICKER2, m_cdCtrl);
-
+<<<<<<< HEAD
 	DDX_Control(pDX, IDC_STATIC1, m_ctrlPic);
 	//DDX_Control(pDX, IDC_SCROLLBAR1, m_horiScrollbar);
-
+=======
 	DDX_Text(pDX, IDC_STATIC6, m_numofall);
 	DDX_Text(pDX, IDC_STATIC8, m_numofyes);
 	DDX_Text(pDX, IDC_STATIC10, m_numofno);
-
+>>>>>>> e6fa2d5f5d3c14c50f1d3111a71fc5a34eb6e614
 }
 
 BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
@@ -155,7 +157,7 @@ BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CplayvideoDlg::OnCbnSelchangeCombo1)
 	ON_BN_CLICKED(IDC_BUTTON6, &CplayvideoDlg::OnBnClickedButton6)
 	//ON_EN_CHANGE(IDC_EDIT3, &CplayvideoDlg::OnEnChangeEdit3)
-	
+	ON_EN_CHANGE(IDC_EDIT1, &CplayvideoDlg::OnEnChangeEdit1)
 	
 	ON_NOTIFY(DTN_DATETIMECHANGE, IDC_DATETIMEPICKER2, &CplayvideoDlg::OnDtnDatetimechangeDatetimepicker2)
 	
@@ -164,7 +166,7 @@ BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
 	
 	ON_WM_SIZE()
 	ON_WM_SIZE()
-
+<<<<<<< HEAD
 	//ON_BN_CLICKED(IDCANCEL, &CplayvideoDlg::OnBnClickedCancel)
 	/*ON_STN_CLICKED(IDC_STATIC6, &CplayvideoDlg::OnStnClickedStatic6)
 	ON_STN_CLICKED(IDC_STATIC3, &CplayvideoDlg::OnStnClickedStatic3)
@@ -173,9 +175,9 @@ BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
 	ON_STN_CLICKED(IDC_STATIC12, &CplayvideoDlg::OnStnClickedStatic12)
 	ON_WM_SHOWWINDOW()*/
 	ON_STN_CLICKED(IDC_STATIC1, &CplayvideoDlg::OnStnClickedStatic1)
-
-	
-
+=======
+	ON_STN_CLICKED(IDC_STATIC6, &CplayvideoDlg::OnStnClickedStatic6)
+>>>>>>> e6fa2d5f5d3c14c50f1d3111a71fc5a34eb6e614
 END_MESSAGE_MAP()
 
 
@@ -260,15 +262,16 @@ BOOL CplayvideoDlg::OnInitDialog()
 	m_DlgRect.SetRect(0, 0, 0, 0);//初始化对话框大小存储变量 
 	
 	CString timeFormat1;
-
-
+<<<<<<< HEAD
+	timeFormat1 = "MM/dd/yyyy   HH:mm ";
+=======
 	timeFormat1 = "MM/dd/yyyy   hh:mm tt";
-
+>>>>>>> e6fa2d5f5d3c14c50f1d3111a71fc5a34eb6e614
 	GetDlgItem(IDC_DATETIMEPICKER1)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
 		(LPCTSTR)timeFormat1);
 
 	CString timeFormat2;
-
+<<<<<<< HEAD
 	timeFormat2 = "MM/dd/yyyy   HH:mm ";
 	GetDlgItem(IDC_DATETIMEPICKER2)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
 		(LPCTSTR)timeFormat2);
@@ -304,7 +307,7 @@ BOOL CplayvideoDlg::OnInitDialog()
 		//prep_stmt3 = con->prepareStatement(sql3);
 		prep_stmt4 = con->prepareStatement(sql4);
 		stm = con->createStatement();
-		//stm->execute("SET NAMES gbk");
+		stm->execute("SET NAMES gbk");
 		//prep_stmt5 = con->prepareStatement(sql5);
 		//stmt = con->createStatement();
 		//stmt->execute("USE Hat");
@@ -498,7 +501,7 @@ void CplayvideoDlg::OnBnClickedOk()
 	// TODO: 在此添加控件通知处理程序代码
 	m_bRun1 = FALSE;
 	m_bRun2 = FALSE;
-	IplImage* img = cvLoadImage(((LPCTSTR)FileName));
+	IplImage* img = cvLoadImage(((LPCSTR)(CStringA)FileName));
 	/*boxs = detector->detect(img);
 	for (bbox_t t : boxs) {
 		if (t.obj_id == 1)
@@ -514,7 +517,6 @@ void CplayvideoDlg::OnBnClickedOk()
 	if (!capture)
 	{
 <<<<<<< HEAD
-<<<<<<< HEAD
 		capture = cvCreateFileCapture(((LPCSTR)(CStringA)FileName));
 =======
 		pwnd = GetDlgItem(IDC_STATIC1);//访问控件的ID，即可返回该控件的指针
@@ -526,9 +528,6 @@ void CplayvideoDlg::OnBnClickedOk()
 		pStc = (CStatic *)GetDlgItem(IDC_STATIC1);
 		capture = cvCreateFileCapture(((LPCTSTR)FileName));
 >>>>>>> bfcffcbe71e7dd65536a3b19be8acb098c1a72aa
-=======
-		capture = cvCreateFileCapture(((LPCTSTR)FileName));
->>>>>>> parent of fcfcfe4... 603
 		
 	}
 	if (!capture)
@@ -1020,10 +1019,10 @@ void CplayvideoDlg::ThreadFunc2(void *param)
 
 	CString str, str2;
 	//USES_CONVERSION;
-	prep_stmt2->setString(1, (LPCSTR)(CStringA)(FileName));
+	prep_stmt2->setString(1, (LPCSTR)(FileName));
 	prep_stmt2->execute();
-
-	prep_stmt4->setString(1, (LPCSTR)(CStringA)(FileName));
+	
+	prep_stmt4->setString(1, (LPCSTR)(FileName));
 	/*try {
 		str.Format(_T("INSERT IGNORE INTO videos (url) VALUE '%s'; "), (LPCSTR)(CStringA)(FileName));
 		stm->execute((LPCSTR)(CStringA)(str));
@@ -1034,7 +1033,12 @@ void CplayvideoDlg::ThreadFunc2(void *param)
 
 	}*/
 	int indexoftable;
-	res = prep_stmt4->executeQuery();
+	try { 
+		res = prep_stmt4->executeQuery(); 
+	}
+	catch (sql::SQLException e) {
+
+	}
 	while (res->next())
 	{
 		indexoftable = res->getInt(1);
@@ -1055,7 +1059,7 @@ void CplayvideoDlg::ThreadFunc2(void *param)
 	double time;
 	int seconds = 0;
 	int hour;
-	int min;
+	int min;                                                                               
 	while (m_bRun2)
 	{
 		time = cvGetCaptureProperty(capture, CV_CAP_PROP_POS_MSEC);
