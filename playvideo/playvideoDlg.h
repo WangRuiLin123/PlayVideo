@@ -4,10 +4,19 @@
 
 #pragma once
 #include "opencv2/opencv.hpp"
+#include "opencv2/gpu/gpu.hpp"
 #include "afxwin.h"
 #include "afxdtctl.h"
 #include "atlimage.h"
+#include "mysql_connection.h"
+
+#include <cppconn/driver.h>
+#include <cppconn/exception.h>
+#include <cppconn/resultset.h>
+#include <cppconn/statement.h>
+#include <cppconn/prepared_statement.h>
 // CplayvideoDlg 对话框
+
 class CplayvideoDlg : public CDialogEx
 {
 // 构造
@@ -26,7 +35,8 @@ public:
 // 实现
 protected:
 	HICON m_hIcon;
-
+	HANDLE hThread;
+	DWORD ThreadID;
 	// 生成的消息映射函数
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
@@ -48,7 +58,12 @@ public:
 	afx_msg void OnCbnSelchangeCombo1();
 	afx_msg void OnBnClickedButton6();
 	CComboBox m_comboWeb;
+<<<<<<< HEAD
 	void OnMatch();
+=======
+	static void ThreadFunc1(void *param);
+	static void ThreadFunc2(void *param);
+>>>>>>> e6fa2d5f5d3c14c50f1d3111a71fc5a34eb6e614
 	afx_msg void OnEnChangeEdit1();
 	void AddPitcure();
 	CDateTimeCtrl m_dtCtrl;
@@ -60,6 +75,7 @@ public:
 	
 	void repaint(UINT id, int last_Width, int now_Width, int last_Height, int now_Height);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+<<<<<<< HEAD
 	
 	
 	CFont m_font;
@@ -76,4 +92,11 @@ public:
 	
 
 	afx_msg void OnStnClickedStatic1();
+=======
+	CFont m_font;*/
+	afx_msg void OnStnClickedStatic6();
+	int m_numofall;
+	int m_numofyes;
+	int m_numofno;
+>>>>>>> e6fa2d5f5d3c14c50f1d3111a71fc5a34eb6e614
 };
