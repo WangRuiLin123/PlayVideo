@@ -22,6 +22,7 @@ CvCapture* capture; //视频获取结构
 CRect rect;//矩形类CRect也为一个没有基类的独立类，封装了RECT结构，有成员变量left、top、right和bottom
 CDC *pDC;//视频显示控件设备上下文
 HDC hDC;//视频显示控件设备句柄
+
 CWnd *pwnd;
 CString FileName;
 CStatic *pStc;//标识图像显示的picture 控件
@@ -54,6 +55,9 @@ std::string sql3 = "CREATE TABLE If Not Exists '%d' ('time' time NOT NULL,'numof
 sql::PreparedStatement  *prep_stmt4;
 std::string sql4 = "SELECT indexoftable FROM videos WHERE url= (?); ";//查找videos中url对应的的indexoftable
 
+<<<<<<< HEAD
+std::string cfg_file = "myyolov3-tiny.cfg";
+=======
 //sql::PreparedStatement  *prep_stmt5;
 std::string sql5 = "INSERT IGNORE INTO '%d '(time,numofall, numofyes, numofno) VALUE (%s,%d, %d, %d); ";//视频文件识别结果
 
@@ -64,6 +68,7 @@ std::string weights_file = "myyolov3-tiny-person_14600.weights";
 //std::string cfg_file = "myyolov3-tiny.cfg";
 //std::string cfg_file = "yolov3-tiny.cfg";
 //std::string weights_file = "yolov3-tiny.weights";
+>>>>>>> e6fa2d5f5d3c14c50f1d3111a71fc5a34eb6e614
 //cv::VideoCapture capture(0);
 //std::string weights_file = "myyolov3-tiny_62600.weights";
 //Detector detector(cfg_file, weights_file); //生成detector
@@ -127,9 +132,14 @@ void CplayvideoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO1, m_comboWeb);
 	DDX_Control(pDX, IDC_DATETIMEPICKER1, m_dtCtrl);
 	DDX_Control(pDX, IDC_DATETIMEPICKER2, m_cdCtrl);
+<<<<<<< HEAD
+	DDX_Control(pDX, IDC_STATIC1, m_ctrlPic);
+	//DDX_Control(pDX, IDC_SCROLLBAR1, m_horiScrollbar);
+=======
 	DDX_Text(pDX, IDC_STATIC6, m_numofall);
 	DDX_Text(pDX, IDC_STATIC8, m_numofyes);
 	DDX_Text(pDX, IDC_STATIC10, m_numofno);
+>>>>>>> e6fa2d5f5d3c14c50f1d3111a71fc5a34eb6e614
 }
 
 BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
@@ -142,7 +152,7 @@ BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CplayvideoDlg::OnBnClickedOk)
 	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_BUTTON5, &CplayvideoDlg::OnBnClickedButton5)
-	
+
 	ON_NOTIFY(DTN_DATETIMECHANGE, IDC_DATETIMEPICKER1, &CplayvideoDlg::OnDtnDatetimechangeDatetimepicker1)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CplayvideoDlg::OnCbnSelchangeCombo1)
 	ON_BN_CLICKED(IDC_BUTTON6, &CplayvideoDlg::OnBnClickedButton6)
@@ -156,7 +166,18 @@ BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
 	
 	ON_WM_SIZE()
 	ON_WM_SIZE()
+<<<<<<< HEAD
+	//ON_BN_CLICKED(IDCANCEL, &CplayvideoDlg::OnBnClickedCancel)
+	/*ON_STN_CLICKED(IDC_STATIC6, &CplayvideoDlg::OnStnClickedStatic6)
+	ON_STN_CLICKED(IDC_STATIC3, &CplayvideoDlg::OnStnClickedStatic3)
+	ON_STN_CLICKED(IDC_STATIC8, &CplayvideoDlg::OnStnClickedStatic8)
+	ON_STN_CLICKED(IDC_STATIC10, &CplayvideoDlg::OnStnClickedStatic10)
+	ON_STN_CLICKED(IDC_STATIC12, &CplayvideoDlg::OnStnClickedStatic12)
+	ON_WM_SHOWWINDOW()*/
+	ON_STN_CLICKED(IDC_STATIC1, &CplayvideoDlg::OnStnClickedStatic1)
+=======
 	ON_STN_CLICKED(IDC_STATIC6, &CplayvideoDlg::OnStnClickedStatic6)
+>>>>>>> e6fa2d5f5d3c14c50f1d3111a71fc5a34eb6e614
 END_MESSAGE_MAP()
 
 
@@ -192,13 +213,16 @@ BOOL CplayvideoDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 	detector = new Detector(cfg_file, weights_file, 0);
 	// TODO: 在此添加额外的初始化代码
-	pwnd = GetDlgItem(IDC_STATIC);//访问控件的ID，即可返回该控件的指针
-	//pwnd->MoveWindow(35,30,352,288);
+	
+	
+	pwnd = GetDlgItem(IDC_STATIC1);//访问控件的ID，即可返回该控件的指针
+	
 	pDC = pwnd->GetDC();//获取设备上下文
 	//pDC =GetDC();
 	hDC = pDC->GetSafeHdc();//返回输出设备上下文的句柄
 	pwnd->GetClientRect(&rect);//GetClientRect是得到窗口句柄的用户坐标。
-	pStc = (CStatic *)GetDlgItem(IDC_STATIC);
+	pStc = (CStatic *)GetDlgItem(IDC_STATIC1);
+	
 	m_comboWeb.AddString(_T("测试视频1"));
 	m_comboWeb.AddString(_T("测试视频2"));
 	m_comboWeb.AddString(_T("测试视频3"));
@@ -238,11 +262,35 @@ BOOL CplayvideoDlg::OnInitDialog()
 	m_DlgRect.SetRect(0, 0, 0, 0);//初始化对话框大小存储变量 
 	
 	CString timeFormat1;
+<<<<<<< HEAD
+	timeFormat1 = "MM/dd/yyyy   HH:mm ";
+=======
 	timeFormat1 = "MM/dd/yyyy   hh:mm tt";
+>>>>>>> e6fa2d5f5d3c14c50f1d3111a71fc5a34eb6e614
 	GetDlgItem(IDC_DATETIMEPICKER1)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
 		(LPCTSTR)timeFormat1);
 
 	CString timeFormat2;
+<<<<<<< HEAD
+	timeFormat2 = "MM/dd/yyyy   HH:mm ";
+	GetDlgItem(IDC_DATETIMEPICKER2)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
+		(LPCTSTR)timeFormat2);
+
+	CRect rectL, rectR;
+	GetDlgItem(IDC_STATIC1)->GetWindowRect(&rectL);//获取控件相对于屏幕的位置
+	ScreenToClient(rectL);//转化为对话框上的相对位置
+	m_ctrlPic.MoveWindow(rectL.left, rectL.top, 880, 495);
+
+
+
+
+    return TRUE;
+
+	m_DlgRect.SetRect(0, 0, 0, 0);//初始化对话框大小存储变量 
+
+	
+	
+=======
 	timeFormat2 = "MM/dd/yyyy   hh:mm tt";
 	GetDlgItem(IDC_DATETIMEPICKER2)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
 		(LPCTSTR)timeFormat2);
@@ -280,6 +328,7 @@ BOOL CplayvideoDlg::OnInitDialog()
 	
 	
 	
+>>>>>>> e6fa2d5f5d3c14c50f1d3111a71fc5a34eb6e614
 	
 }
 
@@ -323,12 +372,13 @@ void CplayvideoDlg::OnPaint()
 	}
 	else
 	{
-		CDC MemDC;
+		AddPitcure();
+		/*CDC MemDC;
 		CBitmap m_Bitmap1;
 		m_Bitmap1.LoadBitmap(IDB_BITMAP1);
 		MemDC.CreateCompatibleDC(NULL);
 		MemDC.SelectObject(&m_Bitmap1);
-		pDC->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), &MemDC, 0, 0, 440, 304, SRCCOPY);
+		pDC->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), &MemDC, 0, 0, 440, 304, SRCCOPY);*/
 	}
 		
 		CDialogEx::OnPaint();
@@ -351,6 +401,13 @@ void CplayvideoDlg::OnBnClickedButton1()
 	cvReleaseCapture(&capture);
 	if (!capture)
 	{
+		pwnd = GetDlgItem(IDC_STATIC1);//访问控件的ID，即可返回该控件的指针
+									   //pwnd->MoveWindow(35,30,352,288);
+		pDC = pwnd->GetDC();//获取设备上下文
+							//pDC =GetDC();
+		hDC = pDC->GetSafeHdc();//返回输出设备上下文的句柄
+		pwnd->GetClientRect(&rect);//GetClientRect是得到窗口句柄的用户坐标。
+		pStc = (CStatic *)GetDlgItem(IDC_STATIC1);
 		capture = cvCaptureFromCAM(0);
 		
 	}
@@ -401,15 +458,30 @@ void CplayvideoDlg::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	cvReleaseCapture(&capture);
+<<<<<<< HEAD
+	pwnd = GetDlgItem(IDC_STATIC1);//访问控件的ID，即可返回该控件的指针
+								   //pwnd->MoveWindow(35,30,352,288);
+	pDC = pwnd->GetDC();//获取设备上下文
+						//pDC =GetDC();
+	hDC = pDC->GetSafeHdc();//返回输出设备上下文的句柄
+	pwnd->GetClientRect(&rect);//GetClientRect是得到窗口句柄的用户坐标。
+	pStc = (CStatic *)GetDlgItem(IDC_STATIC1);
+=======
 	KillTimer(1);
 	m_bRun1 = FALSE;
 	m_bRun2 = FALSE;
+>>>>>>> e6fa2d5f5d3c14c50f1d3111a71fc5a34eb6e614
 	CDC MemDC;
 	CBitmap m_Bitmap1;
 	m_Bitmap1.LoadBitmap(IDB_BITMAP1);
 	MemDC.CreateCompatibleDC(NULL);
 	MemDC.SelectObject(&m_Bitmap1);
 	pDC->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), &MemDC, 0, 0, 440, 304, SRCCOPY);
+
+
+
+	
+	
 }
 
 
@@ -444,7 +516,18 @@ void CplayvideoDlg::OnBnClickedOk()
 	cvReleaseCapture(&capture);
 	if (!capture)
 	{
+<<<<<<< HEAD
 		capture = cvCreateFileCapture(((LPCSTR)(CStringA)FileName));
+=======
+		pwnd = GetDlgItem(IDC_STATIC1);//访问控件的ID，即可返回该控件的指针
+									   //pwnd->MoveWindow(35,30,352,288);
+		pDC = pwnd->GetDC();//获取设备上下文
+							//pDC =GetDC();
+		hDC = pDC->GetSafeHdc();//返回输出设备上下文的句柄
+		pwnd->GetClientRect(&rect);//GetClientRect是得到窗口句柄的用户坐标。
+		pStc = (CStatic *)GetDlgItem(IDC_STATIC1);
+		capture = cvCreateFileCapture(((LPCTSTR)FileName));
+>>>>>>> bfcffcbe71e7dd65536a3b19be8acb098c1a72aa
 		
 	}
 	if (!capture)
@@ -515,16 +598,27 @@ void CplayvideoDlg::OnBnClickedButton5()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	cvReleaseCapture(&capture);
+<<<<<<< HEAD
+	
+
+	pwnd = GetDlgItem(IDC_STATIC1);//访问控件的ID，即可返回该控件的指针
+								   //pwnd->MoveWindow(35,30,352,288);
+	pDC = pwnd->GetDC();//获取设备上下文
+						//pDC =GetDC();
+	hDC = pDC->GetSafeHdc();//返回输出设备上下文的句柄
+	pwnd->GetClientRect(&rect);//GetClientRect是得到窗口句柄的用户坐标。
+	pStc = (CStatic *)GetDlgItem(IDC_STATIC1);
+=======
 	KillTimer(1);
 	m_bRun1 = FALSE;
 	m_bRun2 = FALSE;
+>>>>>>> e6fa2d5f5d3c14c50f1d3111a71fc5a34eb6e614
 	CDC MemDC;
 	CBitmap m_Bitmap1;
 	m_Bitmap1.LoadBitmap(IDB_BITMAP1);
 	MemDC.CreateCompatibleDC(NULL);
 	MemDC.SelectObject(&m_Bitmap1);
 	pDC->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), &MemDC, 0, 0, 440, 304, SRCCOPY);
-	
 }
 
 
@@ -535,7 +629,7 @@ void CplayvideoDlg::OnDtnDatetimechangeDatetimepicker1(NMHDR *pNMHDR, LRESULT *p
 	LPNMDATETIMECHANGE pDTChange = reinterpret_cast<LPNMDATETIMECHANGE>(pNMHDR);
 	// TODO: 在此添加控件通知处理程序代码
 	CString timeFormat;
-	timeFormat = "MM/dd/yyyy   hh:mm:00 tt";
+	timeFormat = "MM/dd/yyyy   HH:mm ";
 	GetDlgItem(IDC_DATETIMEPICKER1)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
 		(LPCTSTR)timeFormat);
 	*pResult = 0;
@@ -578,7 +672,7 @@ void CplayvideoDlg::OnDtnDatetimechangeDatetimepicker2(NMHDR *pNMHDR, LRESULT *p
 	LPNMDATETIMECHANGE pDTChange = reinterpret_cast<LPNMDATETIMECHANGE>(pNMHDR);
 	// TODO: 在此添加控件通知处理程序代码
 	CString timeFormat;
-	timeFormat = "MM/dd/yyyy   hh:mm:00 tt";
+	timeFormat = "MM/dd/yyyy   HH:mm ";
 	GetDlgItem(IDC_DATETIMEPICKER2)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
 		(LPCTSTR)timeFormat);
 	*pResult = 0;
@@ -633,6 +727,10 @@ HBRUSH CplayvideoDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	else if (nCtlColor == CTLCOLOR_STATIC)  //更改静态文本  
 	{
 		pDC->SetTextColor(RGB(0, 0, 0));
+		if (pWnd->GetDlgCtrlID() == IDC_STATIC10|| pWnd->GetDlgCtrlID() == IDC_STATIC5)
+		{
+			pDC->SetTextColor(RGB(255, 0, 0));
+		}
 		pDC->SetBkColor(RGB(217, 226, 241));
 		HBRUSH b=CreateSolidBrush(RGB(217, 226, 241));
 		return b;
@@ -645,16 +743,27 @@ HBRUSH CplayvideoDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 		return b;
 	}
 	
+	
 
 	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
 	return hbr;
 }
 
-/*void CplayvideoDlg::repaint(UINT id, int last_Width, int now_Width, int last_Height, int now_Height)//更新控件位置和大小函数，可以根据需要自行修改  
+void CplayvideoDlg::repaint(UINT id, int last_Width, int now_Width, int last_Height, int now_Height)//更新控件位置和大小函数，可以根据需要自行修改  
 {
-	CRect rect;
+	//CRect rect;
 	CWnd *wnd = NULL;
-	wnd = GetDlgItem(id);
+	CWnd *pwnd = NULL;
+
+	wnd= GetDlgItem(id);
+	pwnd = GetDlgItem(IDC_STATIC1);//访问控件的ID，即可返回该控件的指针
+								   
+	pDC = pwnd->GetDC();//获取设备上下文
+						//pDC =GetDC();
+	hDC = pDC->GetSafeHdc();//返回输出设备上下文的句柄
+	pwnd->GetClientRect(&rect);//GetClientRect是得到窗口句柄的用户坐标。
+	pStc = (CStatic *)GetDlgItem(IDC_STATIC1);
+	
 	if (NULL == wnd)
 	{
 		MessageBox(_T("相应控件不存在"));
@@ -666,6 +775,22 @@ HBRUSH CplayvideoDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	rect.top = (long)((double)rect.top / (double)last_Height*(double)now_Height);
 	rect.bottom = (long)((double)rect.bottom / (double)last_Height*(double)now_Height);
 	wnd->MoveWindow(&rect);
+
+
+	
+
+	LOGFONT LogFont;
+    GetFont()->GetLogFont(&LogFont);
+    LogFont.lfHeight = LogFont.lfHeight / (double)last_Height*(double)now_Height;
+    LogFont.lfWidth = LogFont.lfWidth / (double)last_Width*(double)now_Width;
+    m_font.CreateFontIndirect(&LogFont);
+    GetDlgItem(id)->SetFont(&m_font);
+
+
+
+
+
+
 	
 }
 
@@ -690,10 +815,10 @@ void CplayvideoDlg::OnSize(UINT nType, int cx, int cy)
 		CRect rectDlgChangeSize;
 		GetClientRect(&rectDlgChangeSize);//存储对话框大小改变后对话框大小数据  
 
-		repaint(IDC_STATIC, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());//重绘函数，用以更新对话框上控件的位置和大小  
+		repaint(IDC_STATIC1, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());//重绘函数，用以更新对话框上控件的位置和大小  
 		repaint(IDOK, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
 		repaint(IDCANCEL, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
-		repaint(IDC_STATIC_1, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());//重绘函数，用以更新对话框上控件的位置和大小  
+		repaint(IDC_STATIC2, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());//重绘函数，用以更新对话框上控件的位置和大小  
 		repaint(IDC_STATIC3, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
 		repaint(IDC_STATIC4, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
 		repaint(IDC_STATIC5, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());//重绘函数，用以更新对话框上控件的位置和大小  
@@ -712,17 +837,144 @@ void CplayvideoDlg::OnSize(UINT nType, int cx, int cy)
 		repaint(IDC_DATETIMEPICKER1, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
 		repaint(IDC_DATETIMEPICKER2, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
 		repaint(IDC_COMBO1, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
-		LOGFONT LogFont;
-		GetFont()->GetLogFont(&LogFont);//
-		LogFont.lfHeight += LogFont.lfHeight;
-		LogFont.lfWidth += LogFont.lfWidth;
-		m_font.CreateFontIndirect(&LogFont);
-		GetDlgItem(IDC_BUTTON1)->SetFont(&m_font);
+		repaint(IDC_EDIT3, m_DlgRect.Width(), rectDlgChangeSize.Width(), m_DlgRect.Height(), rectDlgChangeSize.Height());
+	
+		pwnd = GetDlgItem(IDC_STATIC1);//访问控件的ID，即可返回该控件的指针
+									   
+		pDC = pwnd->GetDC();//获取设备上下文
+							//pDC =GetDC();
+		hDC = pDC->GetSafeHdc();//返回输出设备上下文的句柄
+		pwnd->GetClientRect(&rect);//GetClientRect是得到窗口句柄的用户坐标。
+		pStc = (CStatic *)GetDlgItem(IDC_STATIC1);
 		
+		/*CRect  rectL;
+		CWnd *wnd = NULL;
+		GetDlgItem(IDC_STATIC1)->GetWindowRect(&rectL);//获取控件相对于屏幕的位置
+		ScreenToClient(rectL);//转化为对话框上的相对位置
+		int height;
+		int width;
+		height = rectL.bottom - rectL.top;//height为button的高
+		width = rectL.right - rectL.left;//width为button的宽
+
+		
+
+
+		CDC MemDC;
+		CBitmap m_Bitmap1;
+		m_Bitmap1.LoadBitmap(IDB_BITMAP1);
+		MemDC.CreateCompatibleDC(NULL);
+		MemDC.SelectObject(&m_Bitmap1);
+		pDC->StretchBlt(rect.left, rect.top, width, height, &MemDC, 0, 0, 440, 304, SRCCOPY);*/
+
+
+
 	}
 	GetClientRect(&m_DlgRect); //save size of dialog  
-	Invalidate();//更新窗口  
+	Invalidate();//更新窗口 
+	
 
+<<<<<<< HEAD
+	
+}
+void CplayvideoDlg::OnMatch()
+{
+	// TODO: Add your control notification handler code here
+	CRect rectL, rectR;
+	GetDlgItem(IDC_STATIC1)->GetWindowRect(&rectL);//获取控件相对于屏幕的位置
+	ScreenToClient(rectL);//转化为对话框上的相对位置
+	m_ctrlPic.MoveWindow(rectL.top, rectL.left, 900, 1600);
+	int height;
+	int width;
+	height = rectL.bottom - rectL.top;//height为button的高
+	width = rectL.right - rectL.left;//width为button的宽
+}
+
+
+
+
+
+
+
+
+
+/*void CplayvideoDlg::OnBnClickedCancel()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CDialogEx::OnCancel();
+}
+
+
+void CplayvideoDlg::OnStnClickedStatic6()
+{
+	// TODO: 在此添加控件通知处理程序代码
+}
+
+
+void CplayvideoDlg::OnStnClickedStatic3()
+{
+	// TODO: 在此添加控件通知处理程序代码
+}
+
+
+void CplayvideoDlg::OnStnClickedStatic8()
+{
+	// TODO: 在此添加控件通知处理程序代码
+}
+
+
+void CplayvideoDlg::OnStnClickedStatic10()
+{
+	// TODO: 在此添加控件通知处理程序代码
+}
+
+
+void CplayvideoDlg::OnStnClickedStatic12()
+{
+	// TODO: 在此添加控件通知处理程序代码
+}
+
+
+void CplayvideoDlg::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+	CDialogEx::OnShowWindow(bShow, nStatus);
+
+	// TODO: 在此处添加消息处理程序代码
+}
+*/
+
+void CplayvideoDlg::OnStnClickedStatic1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+}
+void CplayvideoDlg::AddPitcure()
+{
+
+	CBitmap bitmap;
+	//加载指定位图资源 Bmp图片ID    
+	bitmap.LoadBitmap(IDB_BITMAP1);
+	//获取对话框上的句柄 图片控件ID    
+	CStatic *p = (CStatic *)GetDlgItem(IDC_STATIC1);
+	//设置静态控件窗口风格为位图居中显示     
+	p->ModifyStyle(0xf, SS_BITMAP | SS_CENTERIMAGE);
+	//将图片设置到Picture控件上    
+	p->SetBitmap(bitmap);
+
+	BITMAP bmpInfo;
+	bitmap.GetBitmap(&bmpInfo);
+	CDC dcMemory;
+	CDC* pDC = GetDlgItem(IDC_STATIC1)->GetDC();
+	dcMemory.CreateCompatibleDC(pDC);
+	CBitmap* pOldBitmap = dcMemory.SelectObject(&bitmap);
+	CRect rect;
+	m_ctrlPic.GetClientRect(&rect);
+	int nX = rect.left + (rect.Width() - bmpInfo.bmWidth) / 2;
+	int nY = rect.top + (rect.Height() - bmpInfo.bmHeight) / 2;
+	//pDC->BitBlt(0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight, &dcMemory, 0, 0, SRCCOPY);    
+	pDC->SetStretchBltMode(COLORONCOLOR);
+	pDC->StretchBlt(0, 0, rect.Width(), rect.Height(), &dcMemory, 0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight, SRCCOPY);
+	dcMemory.SelectObject(pOldBitmap);
+	ReleaseDC(pDC);
+=======
 }*/
 
 
@@ -845,4 +1097,5 @@ void CplayvideoDlg::ThreadFunc2(void *param)
 
 
 
+>>>>>>> e6fa2d5f5d3c14c50f1d3111a71fc5a34eb6e614
 }
