@@ -57,7 +57,6 @@ std::string sql4 = "SELECT indexoftable FROM videos WHERE url= (?); ";//查找vide
 //sql::PreparedStatement  *prep_stmt5;
 std::string sql5 = "INSERT IGNORE INTO '%d '(time,numofall, numofyes, numofno) VALUE (%s,%d, %d, %d); ";//视频文件识别结果
 
-<<<<<<< HEAD
 sql::ResultSet  *res;//mysql结果
 
 std::string cfg_file = "myyolov3-tiny-person.cfg";
@@ -65,10 +64,6 @@ std::string weights_file = "myyolov3-tiny-person_113200.weights";
 //std::string cfg_file = "myyolov3-tiny.cfg";
 //std::string cfg_file = "yolov3-tiny.cfg";
 //std::string weights_file = "yolov3-tiny.weights";
-=======
-
-std::string cfg_file = "myyolov3-tiny.cfg";
->>>>>>> parent of 1b92c6b... 鐣岄潰
 //cv::VideoCapture capture(0);
 //std::string weights_file = "myyolov3-tiny_62600.weights";
 //Detector detector(cfg_file, weights_file); //生成detector
@@ -132,12 +127,9 @@ void CplayvideoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO1, m_comboWeb);
 	DDX_Control(pDX, IDC_DATETIMEPICKER1, m_dtCtrl);
 	DDX_Control(pDX, IDC_DATETIMEPICKER2, m_cdCtrl);
-<<<<<<< HEAD
 	DDX_Text(pDX, IDC_STATIC6, m_numofall);
 	DDX_Text(pDX, IDC_STATIC8, m_numofyes);
 	DDX_Text(pDX, IDC_STATIC10, m_numofno);
-=======
->>>>>>> parent of 1b92c6b... 鐣岄潰
 }
 
 BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
@@ -164,10 +156,7 @@ BEGIN_MESSAGE_MAP(CplayvideoDlg, CDialogEx)
 	
 	ON_WM_SIZE()
 	ON_WM_SIZE()
-<<<<<<< HEAD
 	ON_STN_CLICKED(IDC_STATIC6, &CplayvideoDlg::OnStnClickedStatic6)
-=======
->>>>>>> parent of 1b92c6b... 鐣岄潰
 END_MESSAGE_MAP()
 
 
@@ -249,16 +238,11 @@ BOOL CplayvideoDlg::OnInitDialog()
 	m_DlgRect.SetRect(0, 0, 0, 0);//初始化对话框大小存储变量 
 	
 	CString timeFormat1;
-<<<<<<< HEAD
 	timeFormat1 = "MM/dd/yyyy   hh:mm tt";
-=======
-	timeFormat1 = "MM/dd/yyyy   hh:mm:00 tt";
->>>>>>> parent of 1b92c6b... 鐣岄潰
 	GetDlgItem(IDC_DATETIMEPICKER1)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
 		(LPCTSTR)timeFormat1);
 
 	CString timeFormat2;
-<<<<<<< HEAD
 	timeFormat2 = "MM/dd/yyyy   hh:mm tt";
 	GetDlgItem(IDC_DATETIMEPICKER2)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
 		(LPCTSTR)timeFormat2);
@@ -295,14 +279,6 @@ BOOL CplayvideoDlg::OnInitDialog()
 
 	
 	
-=======
-	timeFormat2 = "MM/dd/yyyy   hh:mm:00 tt";
-	GetDlgItem(IDC_DATETIMEPICKER2)->SendMessage((UINT)DTM_SETFORMAT, (WPARAM)0, (LPARAM)
-		(LPCTSTR)timeFormat2);
-    return TRUE;
-
-	m_DlgRect.SetRect(0, 0, 0, 0);//初始化对话框大小存储变量 
->>>>>>> parent of 1b92c6b... 鐣岄潰
 	
 	
 }
@@ -425,12 +401,9 @@ void CplayvideoDlg::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	cvReleaseCapture(&capture);
-<<<<<<< HEAD
 	KillTimer(1);
 	m_bRun1 = FALSE;
 	m_bRun2 = FALSE;
-=======
->>>>>>> parent of 1b92c6b... 鐣岄潰
 	CDC MemDC;
 	CBitmap m_Bitmap1;
 	m_Bitmap1.LoadBitmap(IDB_BITMAP1);
@@ -542,12 +515,9 @@ void CplayvideoDlg::OnBnClickedButton5()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	cvReleaseCapture(&capture);
-<<<<<<< HEAD
 	KillTimer(1);
 	m_bRun1 = FALSE;
 	m_bRun2 = FALSE;
-=======
->>>>>>> parent of 1b92c6b... 鐣岄潰
 	CDC MemDC;
 	CBitmap m_Bitmap1;
 	m_Bitmap1.LoadBitmap(IDB_BITMAP1);
@@ -752,7 +722,6 @@ void CplayvideoDlg::OnSize(UINT nType, int cx, int cy)
 	}
 	GetClientRect(&m_DlgRect); //save size of dialog  
 	Invalidate();//更新窗口  
-<<<<<<< HEAD
 
 }*/
 
@@ -872,7 +841,3 @@ void CplayvideoDlg::ThreadFunc2(void *param)
 
 
 }
-=======
-
-}*/
->>>>>>> parent of 1b92c6b... 鐣岄潰
