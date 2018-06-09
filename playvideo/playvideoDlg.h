@@ -57,12 +57,8 @@ public:
 	afx_msg void OnCbnSelchangeCombo1();
 	afx_msg void OnBnClickedButton6();
 	CComboBox m_comboWeb;
-<<<<<<< HEAD
 	static void ThreadFunc1(void *param);
 	static void ThreadFunc2(void *param);
-=======
-	
->>>>>>> parent of c57b3bf... 界面修改
 	afx_msg void OnEnChangeEdit1();
 	
 	CDateTimeCtrl m_dtCtrl;
@@ -76,11 +72,8 @@ public:
 	/*void repaint(UINT id, int last_Width, int now_Width, int last_Height, int now_Height);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	CFont m_font;*/
-<<<<<<< HEAD
 	afx_msg void OnStnClickedStatic6();
 	int m_numofall;
 	int m_numofyes;
 	int m_numofno;
-=======
->>>>>>> parent of c57b3bf... 界面修改
 };
